@@ -1,6 +1,6 @@
 return {
     graphics = {
-        resolution = 144
+        resolution = 720
     },
     controls = {
         quit = 'escape',
@@ -17,5 +17,4 @@ return {
         start_x = 0,
         start_y = 0
     }
-
 }
