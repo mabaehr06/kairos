@@ -1,0 +1,64 @@
+local cfg = require "src.config"
+
+player = {}
+
+function player.load()
+    player.x = cfg.player.start_x
+    player.y = cfg.player.start_y
+end
+
+function player.handleBorder()
+    -- getting x Min/Max and y Min/Max for better comprehension
+    xMin = cfg.player.size/2
+    xMax = cfg.graphics.width - cfg.player.size/2
+    
+    yMin = cfg.player.size/2
+    yMax = cfg.graphics.height - cfg.player.size/2
+    
+    
+    -- handling border with the size of the player
+    if      player.x < xMin then player.x = xMin
+    elseif  player.x > xMax then player.x = xMax end
+    
+    if      player.y < yMin then player.y = yMin
+    elseif  player.y > yMax then player.y = yMax end
+end
+
+function player.update(dt)
+    local dx = 0
+    local dy = 0
+
+    -- up/down
+    if love.keyboard.isDown(cfg.controls.movement.up) then      dy = dy - 1 end
+    if love.keyboard.isDown(cfg.controls.movement.down) then    dy = dy + 1 end
+    
+    -- left/right
+    if love.keyboard.isDown(cfg.controls.movement.left) then    dx = dx - 1 end
+    if love.keyboard.isDown(cfg.controls.movement.right) then   dx = dx + 1 end
+
+    -- speed normalization
+    local length = math.sqrt(dx^2+dy^2)
+    if length > 0 then
+        dx, dy = dx/length, dy/length
+    end
+
+    -- application of the measured speed to the player
+    player.x = player.x + dx * cfg.player.speed * dt
+    player.y = player.y + dy * cfg.player.speed * dt
+
+    -- handling borders of the screen
+    player.handleBorder()
+end
+
+function player.draw(dt)
+    -- drawing the player
+    local playerSize = cfg.player.size;
+    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
+    love.graphics.rectangle("fill", player.x - playerSize / 2, player.y - playerSize / 2, playerSize, playerSize) -- in a way to center the square to the real position of the player
+
+    -- drawing the black eye of the player
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.circle("fill", player.x, player.y, playerSize / 4)
+end
+
+return player
