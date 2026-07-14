@@ -15,8 +15,11 @@ return {
     player = {
         scale = 0.7,
         speed = 400,
-        start_x = 0,
-        start_y = 0,
+        spawn = {
+            random = true,
+            x = 0,
+            y = 0
+        },
         oxygen_max = 25
     },
     map = {

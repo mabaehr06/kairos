@@ -4,8 +4,14 @@ local map = require "src.map"
 player = {}
 
 function player.load()
-    player.x = cfg.player.start_x
-    player.y = cfg.player.start_y
+
+    if cfg.player.spawn.random then
+        player.x = math.random(0, map.getWidth()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
+        player.y = math.random(0, map.getHeight()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
+    else
+        player.x = cfg.player.start_x
+        player.y = cfg.player.start_y
+    end
     player.size = cfg.map.tileSize * cfg.player.scale
 end
 

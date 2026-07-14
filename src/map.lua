@@ -57,6 +57,16 @@ function map.getPixelHeight()
     return cfg.map.tileSize * cfg.map.height
 end
 
+-- function that return the width of the map in raw
+function map.getWidth()
+    return cfg.map.width
+end
+
+-- function that return the height of the map in raw
+function map.getHeight()
+    return cfg.map.height
+end
+
 -- function that returns the coordinates of the tile the player is standing on
 function map.getTilesPlayerOn()
     tileX = math.ceil(player.x / cfg.map.tileSize)
