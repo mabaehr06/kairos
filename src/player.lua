@@ -33,10 +33,7 @@ function player.handleBorder()
 end
 
 function player.interact()
-
     local tileX, tileY = map.getTilesPlayerOn()
-    log(tileX, tileY)
-
     map.tiles[tileY][tileX].tint = 0
 end
 

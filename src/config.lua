@@ -14,13 +14,12 @@ return {
     },
     player = {
         scale = 0.7,
-        speed = 400,
+        speed = 100,
         spawn = {
-            random = true,
+            random = true, -- if true, 'x' and 'y' below are ignored
             x = 0,
             y = 0
-        },
-        oxygen_max = 25
+        }
     },
     map = {
         tileSize = 48,
