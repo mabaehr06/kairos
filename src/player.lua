@@ -1,19 +1,21 @@
 local cfg = require "src.config"
+local map = require "src.map"
 
 player = {}
 
 function player.load()
     player.x = cfg.player.start_x
     player.y = cfg.player.start_y
+    player.size = cfg.map.tileSize * cfg.player.scale
 end
 
 function player.handleBorder()
     -- getting x Min/Max and y Min/Max for better comprehension
-    xMin = cfg.player.size/2
-    xMax = cfg.graphics.width - cfg.player.size/2
+    xMin = player.size/2
+    xMax = map.getPixelWidth() - player.size/2
     
-    yMin = cfg.player.size/2
-    yMax = cfg.graphics.height - cfg.player.size/2
+    yMin = player.size/2
+    yMax = map.getPixelHeight() - player.size/2
     
     
     -- handling border with the size of the player
@@ -22,6 +24,14 @@ function player.handleBorder()
     
     if      player.y < yMin then player.y = yMin
     elseif  player.y > yMax then player.y = yMax end
+end
+
+function player.interact()
+
+    local tileX, tileY = map.getTilesPlayerOn()
+    log(tileX, tileY)
+
+    map.tiles[tileY][tileX].tint = 0
 end
 
 function player.update(dt)
@@ -52,7 +62,7 @@ end
 
 function player.draw(dt)
     -- drawing the player
-    local playerSize = cfg.player.size;
+    local playerSize = player.size;
     love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
     love.graphics.rectangle("fill", player.x - playerSize / 2, player.y - playerSize / 2, playerSize, playerSize) -- in a way to center the square to the real position of the player
 

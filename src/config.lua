@@ -9,12 +9,19 @@ return {
             left = 'q',
             down = 's',
             right = 'd'
-        }
+        },
+        interact = 'e'
     },
     player = {
-        size = 48,
-        speed = 800,
+        scale = 0.7,
+        speed = 400,
         start_x = 0,
-        start_y = 0
+        start_y = 0,
+        oxygen_max = 25
+    },
+    map = {
+        tileSize = 48,
+        width = 50,
+        height = 50
     }
 }
