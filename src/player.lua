@@ -112,6 +112,8 @@ end
 
 -- - OXYGEN
 function player.handleOxygen()
+    if player.oxygen <= 0 then return end
+
     if oxygenTime >= cfg.player.oxygenTime then
         player.consumeOxygen()
         oxygenTime = 0
