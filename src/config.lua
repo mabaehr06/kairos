@@ -20,7 +20,9 @@ return {
             x = 0,
             y = 0
         },
-        visibility = 6
+        visibility = 6,
+        maxOxygen = 25,
+        oxygenTime = 2 -- in seconds
     },
     map = {
         tileSize = 48,

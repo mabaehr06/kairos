@@ -5,6 +5,10 @@ local log = require "src.debug.log"
 
 player = {}
 
+local oxygenTime = 0
+
+
+-- - INVENTORY & INTERACTION
 -- function used at the load, it can be used if special items need to be in the inventory of the player at the start
 function player.loadInventory()
     player.inventory = {}
@@ -22,37 +26,6 @@ end
 -- function that remove the ressource given in parameter to the inventory of the player
 function player.removeFromInventory()
     -- nothing to be removed for the moment
-end
-
--- function that load all things needed at the launch of the program
-function player.load()
-
-    -- set a random spawn for the player if the parameter "random" is set to true in the config file ('src.config')
-    if cfg.player.spawn.random then
-        player.x = math.random(0, map.getWidth()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
-        player.y = math.random(0, map.getHeight()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
-    else
-        player.x = cfg.player.start_x
-        player.y = cfg.player.start_y
-    end
-
-    player.size = cfg.map.tileSize * cfg.player.scale -- set the size of the player, based on the size of a tile, and on the scale
-    player.loadInventory() -- load the inventory of the player
-end
-
--- function that prevent the player from going outside of the grid
-function player.handleBorder()
-    -- getting x Min/Max and y Min/Max for better comprehension
-    xMin = player.size/2
-    xMax = map.getPixelWidth() - player.size/2
-    yMin = player.size/2
-    yMax = map.getPixelHeight() - player.size/2
-    
-    -- handling border with the size of the player
-    if      player.x < xMin then player.x = xMin
-    elseif  player.x > xMax then player.x = xMax end
-    if      player.y < yMin then player.y = yMin
-    elseif  player.y > yMax then player.y = yMax end
 end
 
 -- function that return true if the player have the viewing distance to see the tile given in parameter
@@ -86,9 +59,7 @@ function player.interact()
     player.recoltRessource()
 end
 
-
-
--- MOVEMENT
+-- - MOVEMENT
 -- function that manage the movement of the player
 function player.handleMovement(dt)
     local dx, dy = 0, 0
@@ -124,6 +95,58 @@ function player.handleHitBox(px, py, fx, fy)
     end
 end
 
+-- function that prevent the player from going outside of the grid
+function player.handleBorder()
+    -- getting x Min/Max and y Min/Max for better comprehension
+    xMin = player.size/2
+    xMax = map.getPixelWidth() - player.size/2
+    yMin = player.size/2
+    yMax = map.getPixelHeight() - player.size/2
+    
+    -- handling border with the size of the player
+    if      player.x < xMin then player.x = xMin
+    elseif  player.x > xMax then player.x = xMax end
+    if      player.y < yMin then player.y = yMin
+    elseif  player.y > yMax then player.y = yMax end
+end
+
+-- - OXYGEN
+function player.handleOxygen()
+    if oxygenTime >= cfg.player.oxygenTime then
+        player.consumeOxygen()
+        oxygenTime = 0
+    end
+end
+
+function player.consumeOxygen()
+    player.oxygen = player.oxygen - 1
+    log.add(string.format("Oxygène : %d/%d", player.oxygen, cfg.player.maxOxygen))
+    if player.oxygen <= 0 then
+        log.add(string.format("Vous êtes mort d'asphyxie. Fin de la partie."))
+        -- lose condition here
+    end
+end
+
+
+
+-- - LOVE BASIC FUNCTIONS
+-- function that load all things needed at the launch of the program
+function player.load()
+
+    -- set a random spawn for the player if the parameter "random" is set to true in the config file ('src.config')
+    if cfg.player.spawn.random then
+        player.x = math.random(0, map.getWidth()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
+        player.y = math.random(0, map.getHeight()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
+    else
+        player.x = cfg.player.start_x
+        player.y = cfg.player.start_y
+    end
+
+    player.size = cfg.map.tileSize * cfg.player.scale -- set the size of the player, based on the size of a tile, and on the scale
+    player.loadInventory() -- load the inventory of the player
+    player.oxygen = cfg.player.maxOxygen -- set the oxygen to the max at the
+end
+
 -- function that update all things related to the player
 function player.update(dt)
 
@@ -136,6 +159,11 @@ function player.update(dt)
 
     -- handling borders of the screen
     player.handleBorder()
+
+
+    -- oxygen handler
+    oxygenTime = oxygenTime + dt
+    player.handleOxygen()
 end
 
 -- function that draw the player
