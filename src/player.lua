@@ -1,7 +1,35 @@
 local cfg = require "src.config"
 local map = require "src.map"
+local items = require "src.items"
 
 player = {}
+
+-- function player.printInventory()
+--     print("-- inv --")
+--     for i = 1, #items.ressources do
+--         local rID = items.ressources[i].id
+--         print(rID, player.inventory[rID])
+--     end
+--     print("-- --- --")
+-- end
+
+function player.loadInventory()
+    player.inventory = {}
+    for i = 1, #items.ressources do
+        local rID = items.ressources[i].id
+        player.inventory[rID] = 0
+    end
+    -- player.printInventory()
+end
+
+function player.addToInventory(ressource)
+    player.inventory[ressource.id] = player.inventory[ressource.id] + 1
+    -- player.printInventory()
+end
+
+function player.removeFromInventory()
+
+end
 
 function player.load()
 
@@ -13,6 +41,8 @@ function player.load()
         player.y = cfg.player.start_y
     end
     player.size = cfg.map.tileSize * cfg.player.scale
+
+    player.loadInventory()
 end
 
 function player.handleBorder()
@@ -32,9 +62,26 @@ function player.handleBorder()
     elseif  player.y > yMax then player.y = yMax end
 end
 
+function player.lookAround()
+    local x, y = map.getTilesPlayerOn()
+    local nearItems = 0
+    
+    for i = x - 1, x + 1 do
+        for j = y - 1, y + 1 do
+            if map.isInBounds(i, j) and map.tiles[j][i].containObject == true then
+                nearItems = nearItems + 1
+                player.addToInventory(map.tiles[j][i].ressource)
+                map.removeObject(i, j)
+                return
+            end
+        end
+    end
+    -- print("nearItems", x, y, nearItems)
+end
+
+
 function player.interact()
-    local tileX, tileY = map.getTilesPlayerOn()
-    map.tiles[tileY][tileX].tint = 0
+    player.lookAround()
 end
 
 function player.update(dt)
@@ -67,7 +114,7 @@ function player.draw(dt)
     -- drawing the player
     local playerSize = player.size;
     love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
-    love.graphics.rectangle("fill", player.x - playerSize / 2, player.y - playerSize / 2, playerSize, playerSize) -- in a way to center the square to the real position of the player
+    love.graphics.rectangle("fill", player.x - playerSize / 2, player.y - playerSize / 2, playerSize, playerSize, 10, 10) -- in a way to center the square to the real position of the player
 
     -- drawing the black eye of the player
     love.graphics.setColor(0, 0, 0)

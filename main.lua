@@ -7,6 +7,7 @@ local total = 0
 
 
 function love.load()
+    math.randomseed(os.time())
     cfg.graphics.width = love.graphics.getWidth()
     cfg.graphics.height = love.graphics.getHeight()
     player.load()
@@ -17,6 +18,7 @@ end
 function love.update(dt)
     player.update(dt)
     camera.update(dt)
+    map.update(dt)
 end
 
 function love.draw()
@@ -38,3 +40,12 @@ function love.keypressed(key, scancode, isRepeat)
         player.interact()
     end
 end
+
+-- function love.wheelmoved(x, y)
+--     local ts = cfg.map.tileSize
+--     if y > 0 then
+--         cfg.map.tileSize = ts + 1
+--     elseif y < 0 then
+--         cfg.map.tileSize = ts - 1
+--     end
+-- end

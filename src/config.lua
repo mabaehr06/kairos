@@ -10,11 +10,11 @@ return {
             down = 's',
             right = 'd'
         },
-        interact = 'e'
+        interact = 'f'
     },
     player = {
         scale = 0.7,
-        speed = 100,
+        speed = 400,
         spawn = {
             random = true, -- if true, 'x' and 'y' below are ignored
             x = 0,
@@ -24,6 +24,11 @@ return {
     map = {
         tileSize = 48,
         width = 50,
-        height = 50
+        height = 50,
+        ressources = {
+            spawningDelay = 30, -- in seconds
+            spawnRessources = 30,
+            maxRessources = 50
+        }
     }
 }
