@@ -1,38 +1,33 @@
 local cfg = require "src.config"
 local map = require "src.map"
 local items = require "src.items"
+local log = require "src.debug.log"
 
 player = {}
 
--- function player.printInventory()
---     print("-- inv --")
---     for i = 1, #items.ressources do
---         local rID = items.ressources[i].id
---         print(rID, player.inventory[rID])
---     end
---     print("-- --- --")
--- end
-
+-- function used at the load, it can be used if special items need to be in the inventory of the player at the start
 function player.loadInventory()
     player.inventory = {}
     for i = 1, #items.ressources do
         local rID = items.ressources[i].id
         player.inventory[rID] = 0
     end
-    -- player.printInventory()
 end
 
+-- function that add the ressource given in parameter to the inventory of the player
 function player.addToInventory(ressource)
     player.inventory[ressource.id] = player.inventory[ressource.id] + 1
-    -- player.printInventory()
 end
 
+-- function that remove the ressource given in parameter to the inventory of the player
 function player.removeFromInventory()
-
+    -- nothing to be removed for the moment
 end
 
+-- function that load all things needed at the launch of the program
 function player.load()
 
+    -- set a random spawn for the player if the parameter "random" is set to true in the config file ('src.config')
     if cfg.player.spawn.random then
         player.x = math.random(0, map.getWidth()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
         player.y = math.random(0, map.getHeight()) * cfg.map.tileSize + math.random() * cfg.map.tileSize
@@ -40,53 +35,63 @@ function player.load()
         player.x = cfg.player.start_x
         player.y = cfg.player.start_y
     end
-    player.size = cfg.map.tileSize * cfg.player.scale
 
-    player.loadInventory()
+    player.size = cfg.map.tileSize * cfg.player.scale -- set the size of the player, based on the size of a tile, and on the scale
+    player.loadInventory() -- load the inventory of the player
 end
 
+-- function that prevent the player from going outside of the grid
 function player.handleBorder()
     -- getting x Min/Max and y Min/Max for better comprehension
     xMin = player.size/2
     xMax = map.getPixelWidth() - player.size/2
-    
     yMin = player.size/2
     yMax = map.getPixelHeight() - player.size/2
-    
     
     -- handling border with the size of the player
     if      player.x < xMin then player.x = xMin
     elseif  player.x > xMax then player.x = xMax end
-    
     if      player.y < yMin then player.y = yMin
     elseif  player.y > yMax then player.y = yMax end
 end
 
-function player.lookAround()
+-- function that return true if the player have the viewing distance to see the tile given in parameter
+function player.isTileVisible(tileX, tileY)
+    local px, py = map.getTilesPlayerOn()
+    local dx, dy = tileX - px, tileY - py
+    local radius = cfg.player.visibility
+    return dx * dx + dy * dy <= radius * radius
+end
+
+-- function that scan the 8 tiles around the player, and give 1 of the ressources found to the player
+function player.recoltRessource()
     local x, y = map.getTilesPlayerOn()
-    local nearItems = 0
     
     for i = x - 1, x + 1 do
         for j = y - 1, y + 1 do
             if map.isInBounds(i, j) and map.tiles[j][i].containObject == true then
-                nearItems = nearItems + 1
-                player.addToInventory(map.tiles[j][i].ressource)
+                local ressource = map.tiles[j][i].ressource
+                player.addToInventory(ressource)
                 map.removeObject(i, j)
+                log.add(string.format("%s trouvé (total : %d)", ressource.display, player.inventory[ressource.id]))
                 return
             end
         end
     end
-    -- print("nearItems", x, y, nearItems)
+    log.add(string.format("Il n 'y a rien autour de toi."))
 end
 
-
+-- function that is used to manage all functions linked to interact (recolt a ressource, open a object window, repair the rocket, ...)
 function player.interact()
-    player.lookAround()
+    player.recoltRessource()
 end
 
-function player.update(dt)
-    local dx = 0
-    local dy = 0
+
+
+-- MOVEMENT
+-- function that manage the movement of the player
+function player.handleMovement(dt)
+    local dx, dy = 0, 0
 
     -- up/down
     if love.keyboard.isDown(cfg.controls.movement.up) then      dy = dy - 1 end
@@ -105,11 +110,35 @@ function player.update(dt)
     -- application of the measured speed to the player
     player.x = player.x + dx * cfg.player.speed * dt
     player.y = player.y + dy * cfg.player.speed * dt
+    return player.x, player.y
+end
+
+-- function that handle the hitBox of the ressource to the player, it prevent from the player to get inside a ressource
+function player.handleHitBox(px, py, fx, fy)
+    local tx, ty = map.getTilesPlayerOn()
+    local tile = map.tiles[ty][tx]
+    if tile.ressource ~= nil then
+        if tile.ressource.hitBox == true then
+            player.x, player.y = px, py
+        end
+    end
+end
+
+-- function that update all things related to the player
+function player.update(dt)
+
+    -- handling movement
+    local px, py = player.x, player.y
+    local fx, fy = player.handleMovement(dt)
+
+    -- handling hitbox (only ressources for now)
+    player.handleHitBox(px, py, fx, fy)
 
     -- handling borders of the screen
     player.handleBorder()
 end
 
+-- function that draw the player
 function player.draw(dt)
     -- drawing the player
     local playerSize = player.size;

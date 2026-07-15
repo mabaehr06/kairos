@@ -8,7 +8,9 @@ local ressourcesCount = 0
 
 map.tiles = {}
 
--- function that create the map
+-- function that create the map.
+-- it creates every tiles based on the width and height given in src.config
+-- it generate a random tint for the tile
 function map.create()
     for y = 1, cfg.map.height do
         map.tiles[y] = {}
@@ -29,7 +31,6 @@ function map.create()
             map.tiles[y][x] = {
                 tint = tint,
                 pos = {x = xPos, xc = xPosC, y = yPos, yc = yPosC},
-                explored = false,
                 containObject = false,
                 ressource = nil
             }
@@ -37,14 +38,12 @@ function map.create()
     end
 end
 
+-- function that return if a tile contain an object
 function map.containObject(tileX, tileY)
-    if map.tiles[tileY][tileX].containObject == true then
-        return true
-    else
-        return false
-    end
+    return map.tiles[tileY][tileX].containObject
 end
 
+-- function that remove the object placed at a given coordinates from the grid
 function map.removeObject(tileX, tileY)
     local tile = map.tiles[tileY][tileX]
     if tile.containObject == true then
@@ -57,6 +56,7 @@ function map.removeObject(tileX, tileY)
     end
 end
 
+-- function that generate a new ressource, based on the density of each one in 'src.items'
 function map.getRandomRessources()
     
     local r = math.random()
@@ -70,16 +70,18 @@ function map.getRandomRessources()
     return items.ressources[#items.ressources]
 end
 
+-- function that return coordinates that do not contain object (thanks to the function below)
 function map.getRandomFreeTile()
     local tileX = math.random(1, cfg.map.width)
     local tileY = math.random(1, cfg.map.height)
     while map.isFreeTile(tileX, tileY) == false do
-        local tileX = math.random(1, cfg.map.width)
-        local tileY = math.random(1, cfg.map.height)
+        tileX = math.random(1, cfg.map.width)
+        tileY = math.random(1, cfg.map.height)
     end        
     return tileX, tileY
 end
 
+-- return false if the tile is already occupied by an object (it can be either a ressource or an object placed by the player, or even the rocket)
 function map.isFreeTile(tileX, tileY)
     if map.tiles[tileY][tileX].containObject == true then
         return false
@@ -88,12 +90,14 @@ function map.isFreeTile(tileX, tileY)
     end
 end
 
+-- function that generate one new fresh ressource on the grid
 function map.generateOneRessources()
    local tileX, tileY = map.getRandomFreeTile()
    map.tiles[tileY][tileX].ressource = map.getRandomRessources()
    map.tiles[tileY][tileX].containObject = true
 end
 
+-- function that generate either all the ressources from the start of the game, or the ressource every cooldown set
 function map.generateRessources()
     if firstGenerate == false then
         firstGenerate = true
@@ -104,7 +108,6 @@ function map.generateRessources()
     else
         map.generateOneRessources()
         ressourcesCount = ressourcesCount + 1
-        -- print("generated on ", tileY, tileX, map.tiles[tileY][tileX].ressource)
     end
 end
 
@@ -117,20 +120,20 @@ end
 -- map update
 function map.update(dt)
     ressourcesTime = ressourcesTime + dt
-
     if ressourcesTime > cfg.map.ressources.spawningDelay and ressourcesCount < cfg.map.ressources.maxRessources then
         map.generateRessources()
         ressourcesTime = 0
     end
 end
 
--- function that draw the map
-function map.drawTile(x, y)
+-- function that draw the map, with the opacity for the player to see or not the tile
+function map.drawTile(x, y, opacity)
     local tile = map.tiles[y][x]
     love.graphics.setColor(
         map.tiles[y][x].tint,
         map.tiles[y][x].tint,
-        map.tiles[y][x].tint
+        map.tiles[y][x].tint,
+        opacity
     )
     love.graphics.rectangle('fill',
         tile.pos.x,
@@ -140,45 +143,46 @@ function map.drawTile(x, y)
     )
 end
 
+-- function that draw a ressource
 function map.drawRessources(x, y)
     local tile = map.tiles[y][x]
     local ressource = tile.ressource
     local tsize = cfg.map.tileSize
+
     if ressource ~= nil then
 
-        -- fill
-        -- love.graphics.circle('fill', tile.pos.xc, tile.pos.yc, tsize * 0.30)
+        love.graphics.setColor(love.math.colorFromBytes(ressource.color))
 
-        -- high left
+        -- sphere high left
         local tSizeUpperLeft = 0.3 * tsize
         local tCoordsUpperLeft = 0.12 * tsize
-        -- love.graphics.setColor(0,0,0)
-        love.graphics.setColor(love.math.colorFromBytes(ressource.color))
-        love.graphics.ellipse('fill', tile.pos.xc - tCoordsUpperLeft, tile.pos.yc - tCoordsUpperLeft, tSizeUpperLeft ,tSizeUpperLeft)
+        love.graphics.circle('fill', tile.pos.xc - tCoordsUpperLeft, tile.pos.yc - tCoordsUpperLeft, tSizeUpperLeft)
 
-        -- middle right
+        -- sphere middle right
         local tSizeMiddleRight = 0.33 * tsize
         local tCoordsMiddleRight = 0.07 * tsize
-        -- love.graphics.setColor(1,1,1)
-        -- love.graphics.setColor(love.math.colorFromBytes(ressource.color))
-        love.graphics.ellipse('fill', tile.pos.xc + tCoordsMiddleRight, tile.pos.yc, tSizeMiddleRight, tSizeMiddleRight)
+        love.graphics.circle('fill', tile.pos.xc + tCoordsMiddleRight, tile.pos.yc, tSizeMiddleRight)
 
-        -- low left
+        -- sphere low left
         local tSizeLowLeft = 0.22 * tsize
         local tCoordsLowLeft = 0.12 * tsize
-        love.graphics.setColor(love.math.colorFromBytes(ressource.color))
-        love.graphics.ellipse('fill', tile.pos.xc - tCoordsLowLeft, tile.pos.yc + tCoordsLowLeft, tSizeLowLeft, tSizeLowLeft)
-        -- outline
-        -- love.graphics.setColor(0, 0, 0)
-        -- love.graphics.circle('line', tile.pos.xc, tile.pos.yc, tsize / 2)
+        love.graphics.circle('fill', tile.pos.xc - tCoordsLowLeft, tile.pos.yc + tCoordsLowLeft, tSizeLowLeft)
     end
 end
 
+-- function that draw all object related to the map (principaly tiles and object atm)
+-- tiles are drawn with a lower opacity if the player doesn't have the viewing distance to see the tiles
 function map.draw()
     for y = 1, cfg.map.height do
         for x = 1, cfg.map.width do
-            map.drawTile(x, y)
-            map.drawRessources(x, y)        
+            if player.isTileVisible(x, y) == true then
+                -- visible zone
+                map.drawTile(x, y, 1)
+                map.drawRessources(x, y)        
+            else
+                -- fog zone
+                map.drawTile(x, y, 0.75)
+            end
         end
     end
 end
@@ -205,8 +209,8 @@ end
 
 -- function that returns the coordinates of the tile the player is standing on
 function map.getTilesPlayerOn()
-    tileX = math.ceil(player.x / cfg.map.tileSize)
-    tileY = math.ceil(player.y / cfg.map.tileSize)
+    local tileX = math.ceil(player.x / cfg.map.tileSize)
+    local tileY = math.ceil(player.y / cfg.map.tileSize)
     return tileX, tileY
 end
 
