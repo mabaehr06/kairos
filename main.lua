@@ -3,6 +3,8 @@ local player = require "src.player"
 local map = require "src.map"
 local camera = require "src.camera"
 local log = require "src.debug.log"
+local gui = require "src.gui.gui"
+local cycle = require "src.cycle"
 
 local total = 0
 
@@ -12,6 +14,7 @@ function love.log()
     for i = 1, #log.entries do
         txa = txa .. '\n' .. log.entries[i]
     end
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print(txa, 100, 100)
 end
 
@@ -24,10 +27,12 @@ function love.load()
     map.load()
     camera.load()
     love.graphics.setFont(love.graphics.newFont(24))
+    cycle.load()
 end
 
 -- function that update every module
 function love.update(dt)
+    cycle.update(dt)
     player.update(dt)
     camera.update(dt)
     map.update(dt)
@@ -42,6 +47,8 @@ function love.draw()
     player.draw() -- use to draw the player (lol)
 
     love.graphics.pop() -- we go back to before the translation, so we will be able to draw later the gui without any difficulties
+
+    gui.draw()
 
     love.log()
 end

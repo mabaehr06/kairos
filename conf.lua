@@ -6,7 +6,7 @@ function love.conf(t)
     t.window.height = cfg.graphics.resolution
     t.window.width = t.window.height * (16 / 9)
 
-    t.window.fullscreen = true -- if enabled, resolution' setting in config file is useless
+    t.window.fullscreen = false -- if enabled, resolution' setting in config file is useless
     t.window.borderless = true
     t.window.vsync = true
 

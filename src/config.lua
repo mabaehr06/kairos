@@ -22,7 +22,7 @@ return {
         },
         visibility = 6,
         maxOxygen = 25,
-        oxygenTime = 2 -- in seconds
+        oxygenTime = 30 -- in seconds
     },
     map = {
         tileSize = 48,
@@ -33,5 +33,12 @@ return {
             spawnRessources = 30,
             maxRessources = 50
         }
+    },
+    cycle = { -- time in second for a day/night length
+        day        = 180, -- in seconds
+        night      = 120,  -- in seconds
+        
+        dayStart   = 7, -- in hour, the hour the day start and the night end
+        nightStart = 19 -- in hour, the hour the night start and the day end
     }
 }

@@ -172,7 +172,7 @@ end
 function player.draw(dt)
     -- drawing the player
     local playerSize = player.size;
-    love.graphics.setColor(love.math.colorFromBytes(255, 255, 255))
+    love.graphics.setColor(love.math.colorFromBytes(221,215,9))
     love.graphics.rectangle("fill", player.x - playerSize / 2, player.y - playerSize / 2, playerSize, playerSize, 10, 10) -- in a way to center the square to the real position of the player
 
     -- drawing the black eye of the player
