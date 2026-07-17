@@ -18,9 +18,11 @@ function map.create()
 
             local commonTint = 0.3 + math.random() * 0.025
             local rareTint = 0.2 + math.random() * 0.05
-            local tint = 0
+            local colorTint = 0
 
-            if math.random() < 0.02 then tint = rareTint else tint = commonTint end
+            if math.random() < 0.02 then colorTint = rareTint else colorTint = commonTint end
+
+            colorTint = colorTint * 255
 
             -- recuperation of the coordinates in pixel of the tile, for easier access later
             local xPos = (x-1) * cfg.map.tileSize
@@ -29,7 +31,7 @@ function map.create()
             local yPosC = yPos + 1 / 2 * cfg.map.tileSize
             
             map.tiles[y][x] = {
-                tint = tint,
+                tint = {colorTint, colorTint, colorTint},
                 pos = {x = xPos, xc = xPosC, y = yPos, yc = yPosC},
                 containObject = false,
                 ressource = nil
@@ -59,11 +61,11 @@ end
 -- function that generate a new ressource, based on the density of each one in 'src.items'
 function map.getRandomRessources()
     
-    local r = math.random()
+    local random = math.random()
     local cumul = 0
     for i = 1, #items.ressources do
         cumul = cumul + items.ressources[i].density
-        if r < cumul then
+        if random < cumul then
             return items.ressources[i]
         end
     end
@@ -112,10 +114,10 @@ function map.generateRessources()
 end
 
 -- map load
-function map.load()
-    map.create()
-    map.generateRessources()
-end
+-- function map.load()
+--     map.create()
+--     map.generateRessources()
+-- end
 
 -- map update
 function map.update(dt)
@@ -129,12 +131,15 @@ end
 -- function that draw the map, with the opacity for the player to see or not the tile
 function map.drawTile(x, y, opacity)
     local tile = map.tiles[y][x]
-    love.graphics.setColor(
-        map.tiles[y][x].tint,
-        map.tiles[y][x].tint,
-        map.tiles[y][x].tint,
-        opacity
-    )
+
+    for x = 1, 3 do
+        if tile.tint[x] > 1 then
+            tile.tint[x] = tile.tint[x] / 255
+        end
+    end
+    love.graphics.setColor(tile.tint[1], tile.tint[2], tile.tint[3], opacity)
+
+    
     love.graphics.rectangle('fill',
         tile.pos.x,
         tile.pos.y,

@@ -50,7 +50,7 @@ function cycle.format()
 
     -- number of fictiv min have passed since the start of the day
     local minSinceDayStart = nil
-    print(isDay)
+
     if isDay == true then
         minSinceDayStart = currentDayTime * minPerSec + dayStart * 60
     else

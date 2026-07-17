@@ -2,6 +2,7 @@ local cfg = require "src.config"
 local map = require "src.map"
 local items = require "src.items"
 local log = require "src.debug.log"
+local rocket = require "src.rocket"
 
 player = {}
 
@@ -20,6 +21,7 @@ end
 
 -- function that add the ressource given in parameter to the inventory of the player
 function player.addToInventory(ressource)
+    if ressource == nil then return end
     player.inventory[ressource.id] = player.inventory[ressource.id] + 1
 end
 
@@ -44,6 +46,7 @@ function player.recoltRessource()
         for j = y - 1, y + 1 do
             if map.isInBounds(i, j) and map.tiles[j][i].containObject == true then
                 local ressource = map.tiles[j][i].ressource
+                if ressource == nil then return end
                 player.addToInventory(ressource)
                 map.removeObject(i, j)
                 log.add(string.format("%s trouvé (total : %d)", ressource.display, player.inventory[ressource.id]))
@@ -56,7 +59,12 @@ end
 
 -- function that is used to manage all functions linked to interact (recolt a ressource, open a object window, repair the rocket, ...)
 function player.interact()
-    player.recoltRessource()
+    
+    if rocket.isPlayerAround() then
+        rocket.interact()
+    else
+        player.recoltRessource()
+    end
 end
 
 -- - MOVEMENT
@@ -88,10 +96,8 @@ end
 function player.handleHitBox(px, py, fx, fy)
     local tx, ty = map.getTilesPlayerOn()
     local tile = map.tiles[ty][tx]
-    if tile.ressource ~= nil then
-        if tile.ressource.hitBox == true then
-            player.x, player.y = px, py
-        end
+    if tile.containObject == true then
+        player.x, player.y = px, py
     end
 end
 
@@ -129,7 +135,16 @@ function player.consumeOxygen()
     end
 end
 
-
+function player.consumeGlace()
+    local nbGlace = player.inventory['glace']
+    if nbGlace > 0 and player.oxygen < cfg.player.maxOxygen then
+        nbGlace = nbGlace - 1
+        player.oxygen = player.oxygen + 1
+        log.add(string.format("Oxygène récupéré. Glace: %d", player.inventory['glace']))
+        return
+    end
+    log.add(string.format("Vous ne pouvez pas consommez ceci actuellement."))
+end
 
 -- - LOVE BASIC FUNCTIONS
 -- function that load all things needed at the launch of the program

@@ -11,9 +11,22 @@ items.ressources =
     { id = 'helium',    density = 0.02, display = "Hélium-3" , color = {100,230,220}, hitBox = true }
 }
 
-items.objects = 
+items.objects = {}
+
+items.rocket =
 {
-    
+    -- { id = 'coque',        display = "Coque",        cost = { regolithe = 6, fer = 2 } },
+    -- { id = 'reservoirs',   display = "Réservoirs",   cost = { fer = 3, titane = 2 } },
+    -- { id = 'electronique', display = "Électronique", cost = { silicium = 3, fer = 1 } },
+    -- { id = 'moteurs',      display = "Moteurs",      cost = { titane = 3, fer = 2 } },
+    -- { id = 'carburant',    display = "Carburant",    cost = { glace = 2, helium = 2 } }
+
+    -- tests
+    { id = 'coque',        display = "Coque",        cost = { regolithe = 0 } },
+    { id = 'reservoirs',   display = "Réservoirs",   cost = { regolithe = 0 } },
+    { id = 'electronique', display = "Électronique", cost = { regolithe = 0 } },
+    { id = 'moteurs',      display = "Moteurs",      cost = { regolithe = 0 } },
+    { id = 'carburant',    display = "Carburant",    cost = { regolithe = 0 } },
 }
 
 return items
