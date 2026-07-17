@@ -27,12 +27,12 @@ return {
     },
     map = {
         tileSize = 48,
-        width = 25,
-        height = 15,
+        width = 50,
+        height = 50,
         ressources = {
-            spawningDelay = 0, -- in seconds
-            spawnRessources = 2,
-            maxRessources = 30
+            spawningDelay = 30, -- in seconds
+            spawnRessources = 20,
+            maxRessources = 50
         }
     },
     cycle = { -- time in second for a day/night length
