@@ -1,4 +1,5 @@
 local cfg = require "src.config"
+local game = require "src.game"
 
 local cycle = {}
 
@@ -8,7 +9,7 @@ local dayStart = 0
 local nightStart = 0
 
 -- dtTotal (float) (in seconds)
-local dtTotal = 0
+-- local dtTotal = 0
 
 function cycle.load()
     dayTime = cfg.cycle.day
@@ -26,7 +27,7 @@ function cycle.format()
     local dayTotalTime = dayTime + nightTime
 
     -- formula to get the number of second elapsed on the current day
-    local currentDayTime = dtTotal % dayTotalTime
+    local currentDayTime = game.totalTime % dayTotalTime
 
     -- formula to get the cyrcle format
     local isDay = (currentDayTime < dayTime)
@@ -34,7 +35,7 @@ function cycle.format()
     local cycle = isDay and "Jour" or "Nuit"
 
     -- formula to get the number of day (we start Day 1, so + 1 at the end)
-    local day = (dtTotal / (dayTime + nightTime)) + 1
+    local day = (game.totalTime / (dayTime + nightTime)) + 1
 
     -- number of hours a day/night last
     local fictivDayLength = nightStart - dayStart
@@ -61,11 +62,7 @@ function cycle.format()
     local hour = math.floor(minSinceDayStart / 60) % 24
     local min = minSinceDayStart % 60
 
-    return string.format("%s %d - %02dh%02d", cycle, day, hour, min)
-end
-
-function cycle.update(dt)
-    dtTotal = dtTotal + dt
+    return string.format("%s %d - %02dh%02d (%ds)", cycle, day, hour, min, currentDayTime)
 end
 
 return cycle

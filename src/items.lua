@@ -29,4 +29,13 @@ items.rocket =
     -- { id = 'carburant',    display = "Carburant",    cost = { regolithe = 0 } },
 }
 
+function items.getRessourceById(id)
+    for i = 1, #items.ressources do
+        if items.ressources[i].id == id then
+            return items.ressources[i]
+        end
+    end
+    return nil
+end
+
 return items

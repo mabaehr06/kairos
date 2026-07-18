@@ -6,8 +6,7 @@ local log = require "src.debug.log"
 local gui = require "src.gui.gui"
 local cycle = require "src.cycle"
 local rocket = require "src.rocket"
-
-total = 0
+local game = require "src.game"
 
 -- function only used to log 
 function love.log()
@@ -21,6 +20,7 @@ end
 
 -- function that load everything the program need at the launch of the program
 function love.load()
+    game.load()
     math.randomseed(os.time())
     cfg.graphics.width = love.graphics.getWidth()
     cfg.graphics.height = love.graphics.getHeight()
@@ -35,11 +35,15 @@ end
 
 -- function that update every module
 function love.update(dt)
-    total = total + dt
-    cycle.update(dt)
-    player.update(dt)
-    camera.update(dt)
-    map.update(dt)
+    local state = game.stateSelected
+
+    if state == game.state.inGame or state == game.state.inventory
+     then
+        game.update(dt)
+        player.update(dt)
+        camera.update(dt)
+        map.update(dt)
+    end
 end
 
 -- function that draw eve-ry-thing
@@ -60,15 +64,30 @@ end
 
 -- function that handle key inputs
 function love.keypressed(key, scancode, isRepeat)
-    if (key == cfg.controls.quit) then
-        love.event.quit()
+    local ctrl = cfg.controls
+    local state = game.stateSelected
+    local gs = game.state
+
+    -- quit the game
+    if key == ctrl.quit then love.event.quit() end
+
+    -- inventory handler
+    if key == ctrl.inventory then
+        if state == gs.inGame then game.changeState(gs.inventory)
+        elseif state == gs.inventory then game.changeState(gs.inGame) end
     end
 
-    if (key == cfg.controls.interact) then
-        player.interact()
-    end
-
-    if (key == cfg.controls.useGlace) then
-        player.consumeGlace()
+    -- interaction handler
+    if state == gs.inGame then
+        if key == ctrl.interact then
+            player.interact()
+        end
+        if key == ctrl.useGlace then
+            player.consumeGlace()
+        end
     end
 end
+
+-- function love.mousepressed(x, y, button, istouch, presses)
+--     print(x, y, button, istouch, presses)
+-- end

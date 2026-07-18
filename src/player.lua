@@ -3,6 +3,7 @@ local map = require "src.map"
 local items = require "src.items"
 local log = require "src.debug.log"
 local rocket = require "src.rocket"
+local game = require "src.game"
 
 player = {}
 
@@ -130,7 +131,7 @@ function player.consumeOxygen()
     player.oxygen = player.oxygen - 1
     log.add(string.format("Oxygène : %d/%d", player.oxygen, cfg.player.maxOxygen))
     if player.oxygen <= 0 then
-        log.add(string.format("Vous êtes mort d'asphyxie. Fin de la partie."))
+        game.lose(string.format("Vous êtes mort d'asphyxie. Fin de la partie."))
         -- lose condition here
     end
 end
@@ -176,7 +177,6 @@ function player.update(dt)
 
     -- handling borders of the screen
     player.handleBorder()
-
 
     -- oxygen handler
     oxygenTime = oxygenTime + dt

@@ -10,9 +10,6 @@ local hud = {}
 
 function hud.drawOxygen()
 
-    -- placement
-
-
     -- variables getters and color getters
     local oxygen = player.oxygen
     local maxOxygen = cfg.player.maxOxygen
@@ -34,26 +31,23 @@ function hud.drawOxygen()
     local finalOxygenText = string.format("Oxygen: %d/%d", oxygen, maxOxygen)
 
     -- Back Oxygen Rectangle
+    local fow, foh = font:getWidth(finalOxygenText), font:getHeight()
     love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle('fill', 50, sh-50, 100, 50)
+    love.graphics.rectangle('fill', 50, sh-50, fow, foh)
 
     -- Oxygen Text
-    -- local finalOxygenTextDraw = screen.text(finalOxyge)
     love.graphics.setColor(love.math.colorFromBytes(color))
     love.graphics.print(finalOxygenText, 50, sh - 50)
-
 end
 
 function hud.drawTime()
     local text = cycle.format()
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(text, sw - 200, 10)
+    love.graphics.print(text, sw - 300, 10)
 end
 
 function hud.draw()
-    -- print("screen dimensions", sw, sh)
-
     -- Oxygen interface
     hud.drawOxygen()
 

@@ -3,6 +3,7 @@ local map = require "src.map"
 local items = require "src.items"
 local utils = require "src.utils"
 local log = require "src.debug.log"
+local game = require "src.game"
 
 local rocket = {}
 
@@ -94,7 +95,7 @@ end
 
 -- victory function
 function rocket.launch()
-    log.add(string.format("Victoire en %.02f secondes", total))
+    game.win()
 end
 
 -- interact function, to repair the rocket if not, and then win

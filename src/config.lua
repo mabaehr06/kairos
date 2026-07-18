@@ -11,22 +11,23 @@ return {
             right = 'd'
         },
         interact = 'f',
-        useGlace = 'c'
+        useGlace = 'c',
+        inventory = 'e'
     },
     player = {
         scale = 0.7,
-        speed = 300,
+        speed = 400,
         spawn = {
             random = true, -- if true, 'x' and 'y' below are ignored
             x = 0,
             y = 0
         },
         visibility = 6,
-        maxOxygen = 25,
+        maxOxygen = 5,
         oxygenTime = 30 -- in seconds
     },
     map = {
-        tileSize = 48,
+        tileSize = 64,
         width = 50,
         height = 50,
         ressources = {
