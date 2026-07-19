@@ -12,7 +12,8 @@ return {
         },
         interact = 'f',
         useGlace = 'c',
-        inventory = 'e'
+        inventory = 'e',
+        useOxygen = 'v'
     },
     player = {
         scale = 0.7,
@@ -46,5 +47,10 @@ return {
     rocket = {
         sizeX = 2,
         sizeY = 3
-    }
+    },
+    power = {
+        panel        = { production = 1, productionDelay = 5, capacity = 10 },
+        battery      = { capacity = 50 },
+        electrolyzer = { glaceCost = 1, electricityCost = 6 }
+    },
 }

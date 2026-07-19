@@ -22,6 +22,10 @@ function player.loadInventory()
         local oID = items.objects[i].id
         player.inventory[oID] = 0
     end
+    for i = 1, #items.specials do
+        local sID = items.specials[i].id
+        player.inventory[sID] = 0
+    end
 end
 
 -- function that add the ressource given in parameter to the inventory of the player

@@ -65,6 +65,13 @@ function cycle.format()
     return string.format("%s %d - %02dh%02d", cycle, day, hour, min)
 end
 
+-- return true if it is currently daytime
+function cycle.computeIsDay()
+    local dayTotalTime = dayTime + nightTime
+    local currentDayTime = game.totalTime % dayTotalTime
+    return currentDayTime < dayTime
+end
+
 return cycle
 
 

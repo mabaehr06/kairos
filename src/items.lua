@@ -11,6 +11,11 @@ items.ressources =
     { id = 'helium',    density = 0.02, display = "Hélium-3" , color = {100,230,220}, hitBox = true }
 }
 
+items.specials =
+{
+    { id = 'oxygene', display = "Oxygène pur" }
+}
+
 items.objects =
 {
     { id = 'panneau',       display = "Panneau solaire", cost = { silicium = 2, fer = 1 }, craftTime = 5,  color = { 30,  60, 120} },

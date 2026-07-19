@@ -35,6 +35,14 @@ function inventory.drawRessources()
         local q = player.inventory[r.id]
         love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
     end
+
+    yActual = yActual + 30
+    for i = 1, #items.specials do
+        yActual = yActual + 30
+        local r = items.specials[i]
+        local q = player.inventory[r.id]
+        love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
+    end
     return
 end
 
