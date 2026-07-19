@@ -11,7 +11,12 @@ items.ressources =
     { id = 'helium',    density = 0.02, display = "Hélium-3" , color = {100,230,220}, hitBox = true }
 }
 
-items.objects = {}
+items.objects =
+{
+    { id = 'panneau',       display = "Panneau solaire", cost = { silicium = 2, fer = 1 }, craftTime = 5,  color = { 30,  60, 120} },
+    { id = 'batterie',      display = "Batterie",        cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
+    { id = 'electrolyseur', display = "Électrolyseur",   cost = { fer = 2, titane = 1 },   craftTime = 10, color = {200, 120,  40} },
+}
 
 items.rocket =
 {

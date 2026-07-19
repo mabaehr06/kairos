@@ -63,34 +63,26 @@ function rocket.isPlayerAround()
 end
 
 function rocket.deposit()
-    local cost      = items.rocket[rocket.currentStep].cost
-    local display   = items.rocket[rocket.currentStep].display
+    local step      = items.rocket[rocket.currentStep]
 
     -- finding if the player have enough quantity of each required item before processing to the upgrade
-    for ressourceId, quantity in pairs(cost) do
-        playerQuantity = player.inventory[ressourceId]
-        if playerQuantity < quantity then
-            goto caseNotEnoughItem
-        end
+    -- case: the player doesn't have enough ressources to buy the step
+    if not player.hasRessources(step.cost) then
+        log.add("Vous ne pouvez pas améliorer la fusée")
+        return
     end
 
     -- case: the player have enough item to buy the step and advance to the next one
-    for ressourceId, quantity in pairs(cost) do
+    for ressourceId, quantity in pairs(step.cost) do
         player.inventory[ressourceId] = player.inventory[ressourceId] - quantity
     end
-    log.add(string.format("Amélioration %s effectué (%d/%d)", display, rocket.currentStep, rocket.maximalStep))
+    log.add(string.format("Amélioration %s effectué (%d/%d)", step.display, rocket.currentStep, rocket.maximalStep))
     rocket.currentStep = rocket.currentStep + 1
 
     -- case rocket is repaired
     if rocket.currentStep > rocket.maximalStep then
         rocket.repaired = true
     end
-    
-    do return end
-
-    -- case: the player doesn't have enough ressources to buy the step
-    ::caseNotEnoughItem::
-    log.add("Vous ne pouvez pas améliorer la fusée")
 end
 
 -- victory function

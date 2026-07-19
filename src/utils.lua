@@ -19,4 +19,9 @@ function utils.countLen(object)
     return count
 end
 
+-- return true if the point (px, py) is inside the given rectangle
+function utils.isPointInRect(px, py, rx, ry, rw, rh)
+    return px >= rx and px <= rx + rw and py >= ry and py <= ry + rh
+end
+
 return utils

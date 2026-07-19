@@ -175,6 +175,21 @@ function map.drawRessources(x, y)
     end
 end
 
+-- function that draw an object placed by the player
+function map.drawObjects(x, y)
+    local tile = map.tiles[y][x]
+    local object = tile.object
+    local tsize = cfg.map.tileSize
+
+    if object ~= nil then
+        love.graphics.setColor(love.math.colorFromBytes(object.color))
+
+        local objectSize = 0.7 * tsize
+        local objectMargin = (tsize - objectSize) / 2
+        love.graphics.rectangle('fill', tile.pos.x + objectMargin, tile.pos.y + objectMargin, objectSize, objectSize)
+    end
+end
+
 -- function that draw all object related to the map (principaly tiles and object atm)
 -- tiles are drawn with a lower opacity if the player doesn't have the viewing distance to see the tiles
 function map.draw()
@@ -183,7 +198,8 @@ function map.draw()
             if player.isTileVisible(x, y) == true then
                 -- visible zone
                 map.drawTile(x, y, 1)
-                map.drawRessources(x, y)        
+                map.drawRessources(x, y)
+                map.drawObjects(x, y)
             else
                 -- fog zone
                 map.drawTile(x, y, 0.75)

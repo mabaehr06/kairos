@@ -18,6 +18,10 @@ function player.loadInventory()
         local rID = items.ressources[i].id
         player.inventory[rID] = 0
     end
+    for i = 1, #items.objects do
+        local oID = items.objects[i].id
+        player.inventory[oID] = 0
+    end
 end
 
 -- function that add the ressource given in parameter to the inventory of the player
@@ -45,9 +49,9 @@ function player.recoltRessource()
     
     for i = x - 1, x + 1 do
         for j = y - 1, y + 1 do
-            if map.isInBounds(i, j) and map.tiles[j][i].containObject == true then
+            -- only tiles holding a ressource can be harvested (not the rocket or a placed object)
+            if map.isInBounds(i, j) and map.tiles[j][i].ressource ~= nil then
                 local ressource = map.tiles[j][i].ressource
-                if ressource == nil then return end
                 player.addToInventory(ressource)
                 map.removeObject(i, j)
                 log.add(string.format("%s trouvé (total : %d)", ressource.display, player.inventory[ressource.id]))
@@ -56,6 +60,15 @@ function player.recoltRessource()
         end
     end
     log.add(string.format("Il n 'y a rien autour de toi."))
+end
+
+function player.hasRessources(cost)
+    for ressourceID, quantity in pairs(cost) do
+        if player.inventory[ressourceID] < quantity then 
+            return false
+        end
+    end
+    return true
 end
 
 -- function that is used to manage all functions linked to interact (recolt a ressource, open a object window, repair the rocket, ...)
@@ -71,6 +84,11 @@ end
 -- - MOVEMENT
 -- function that manage the movement of the player
 function player.handleMovement(dt)
+
+    if game.stateSelected ~= game.state.inGame then
+        return player.x, player.y
+    end
+
     local dx, dy = 0, 0
 
     -- up/down

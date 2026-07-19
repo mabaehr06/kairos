@@ -23,7 +23,7 @@ return {
             y = 0
         },
         visibility = 6,
-        maxOxygen = 5,
+        maxOxygen = 25,
         oxygenTime = 30 -- in seconds
     },
     map = {

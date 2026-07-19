@@ -7,16 +7,8 @@ local gui = require "src.gui.gui"
 local cycle = require "src.cycle"
 local rocket = require "src.rocket"
 local game = require "src.game"
-
--- function only used to log 
-function love.log()
-    local txa = ""
-    for i = 1, #log.entries do
-        txa = txa .. '\n' .. log.entries[i]
-    end
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print(txa, cfg.graphics.width - 500, 50)
-end
+local crafts = require "src.crafts"
+local inventory = require "src.gui.inventory"
 
 -- function that load everything the program need at the launch of the program
 function love.load()
@@ -37,17 +29,19 @@ end
 function love.update(dt)
     local state = game.stateSelected
 
-    if state == game.state.inGame or state == game.state.inventory
-     then
+    if state == game.state.inGame or state == game.state.inventory then
         game.update(dt)
         player.update(dt)
         camera.update(dt)
         map.update(dt)
+        crafts.update(dt)
     end
 end
 
 -- function that draw eve-ry-thing
 function love.draw()
+    local state = game.stateSelected
+
     love.graphics.push() -- use is to keep memory of the position before the translation
     love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
 
@@ -59,7 +53,7 @@ function love.draw()
 
     gui.draw()
 
-    love.log()
+    if state == game.state.inGame or state == game.state.inventory then log.draw() end
 end
 
 -- function that handle key inputs
@@ -88,6 +82,12 @@ function love.keypressed(key, scancode, isRepeat)
     end
 end
 
--- function love.mousepressed(x, y, button, istouch, presses)
---     print(x, y, button, istouch, presses)
--- end
+function love.mousepressed(x, y, button)
+    local state = game.stateSelected
+
+    if state == game.state.inventory then
+        inventory.mousepressed(x, y, button)
+    elseif state == game.state.inGame then
+        crafts.place(x, y, button)
+    end
+end

@@ -25,6 +25,11 @@ function camera.update(dt)
     camera.y = utils.clamp(player.y - cgh / 2, 0, map.getPixelHeight() - cgh)
 end
 
+-- convert screen coordinates to world coordinates (reverse of the draw translate)
+function camera.toWorld(screenX, screenY)
+    return screenX + camera.x, screenY + camera.y
+end
+
 return camera
 
 

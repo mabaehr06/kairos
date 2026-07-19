@@ -62,7 +62,7 @@ function cycle.format()
     local hour = math.floor(minSinceDayStart / 60) % 24
     local min = minSinceDayStart % 60
 
-    return string.format("%s %d - %02dh%02d (%ds)", cycle, day, hour, min, currentDayTime)
+    return string.format("%s %d - %02dh%02d", cycle, day, hour, min)
 end
 
 return cycle
