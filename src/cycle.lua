@@ -16,8 +16,6 @@ function cycle.load()
     nightTime = cfg.cycle.night
     dayStart = cfg.cycle.dayStart
     nightStart = cfg.cycle.nightStart
-    
-    cycle.isDay = false
 end
 
 -- function to format from the provided ressources
@@ -30,8 +28,7 @@ function cycle.format()
     local currentDayTime = game.totalTime % dayTotalTime
 
     -- formula to get the cyrcle format
-    local isDay = (currentDayTime < dayTime)
-    cycle.isDay = isDay
+    local isDay = cycle.computeIsDay()
     local cycle = isDay and "Jour" or "Nuit"
 
     -- formula to get the number of day (we start Day 1, so + 1 at the end)

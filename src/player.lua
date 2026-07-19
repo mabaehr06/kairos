@@ -4,6 +4,8 @@ local items = require "src.items"
 local log = require "src.debug.log"
 local rocket = require "src.rocket"
 local game = require "src.game"
+local power = require "src.power"
+local utils = require "src.utils"
 
 player = {}
 
@@ -77,12 +79,18 @@ end
 
 -- function that is used to manage all functions linked to interact (recolt a ressource, open a object window, repair the rocket, ...)
 function player.interact()
-    
     if rocket.isPlayerAround() then
         rocket.interact()
-    else
-        player.recoltRessource()
+        return
     end
+
+    local tileX, tileY = map.getTilesPlayerOn()
+    if map.findObjectAround(tileX, tileY, 'electrolyseur') then
+        power.electrolyze()
+        return
+    end
+
+    player.recoltRessource()
 end
 
 -- - MOVEMENT
@@ -158,15 +166,15 @@ function player.consumeOxygen()
     end
 end
 
-function player.consumeGlace()
-    local nbGlace = player.inventory['glace']
-    if nbGlace > 0 and player.oxygen < cfg.player.maxOxygen then
-        nbGlace = nbGlace - 1
-        player.oxygen = player.oxygen + 1
-        log.add(string.format("Oxygène récupéré. Glace: %d", player.inventory['glace']))
+function player.consumeForOxygen(itemId, restore)
+    local maxOxy = cfg.player.maxOxygen
+    if player.inventory[itemId] > 0 and player.oxygen < maxOxy then
+        player.inventory[itemId] = player.inventory[itemId] - 1
+        player.oxygen = utils.clamp(player.oxygen + restore, 0, maxOxy)
+        log.add(string.format("Oxygène : %d/%d", player.oxygen, maxOxy))
         return
     end
-    log.add(string.format("Vous ne pouvez pas consommez ceci actuellement."))
+    log.add("Vous ne pouvez pas consommer ceci actuellement.")
 end
 
 -- - LOVE BASIC FUNCTIONS

@@ -18,8 +18,8 @@ items.specials =
 
 items.objects =
 {
-    { id = 'panneau',       display = "Panneau solaire", cost = { silicium = 2, fer = 1 }, craftTime = 5,  color = { 30,  60, 120} },
-    { id = 'batterie',      display = "Batterie",        cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
+    { id = 'panel',         display = "Panneau solaire", cost = { silicium = 2, fer = 1 }, craftTime = 5,  color = { 30,  60, 120} },
+    { id = 'battery',       display = "Batterie",        cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
     { id = 'electrolyseur', display = "Électrolyseur",   cost = { fer = 2, titane = 1 },   craftTime = 10, color = {200, 120,  40} },
 }
 

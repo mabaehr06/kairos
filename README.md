@@ -6,4 +6,4 @@
 - how to display a bar
 
 # To do actually: 
-- add a game file to manage all informations linked about the game itself (state, main objectif)
+- add a game file to manage all informations linked about the game itself (state, main objective)

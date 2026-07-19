@@ -9,6 +9,7 @@ local rocket = require "src.rocket"
 local game = require "src.game"
 local crafts = require "src.crafts"
 local inventory = require "src.gui.inventory"
+local power = require "src.power"
 
 -- function that load everything the program need at the launch of the program
 function love.load()
@@ -23,6 +24,7 @@ function love.load()
     camera.load()
     love.graphics.setFont(love.graphics.newFont(24))
     cycle.load()
+    power.load()
 end
 
 -- function that update every module
@@ -35,13 +37,12 @@ function love.update(dt)
         camera.update(dt)
         map.update(dt)
         crafts.update(dt)
+        power.update(dt)
     end
 end
 
 -- function that draw eve-ry-thing
 function love.draw()
-    local state = game.stateSelected
-
     love.graphics.push() -- use is to keep memory of the position before the translation
     love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
 
@@ -53,7 +54,7 @@ function love.draw()
 
     gui.draw()
 
-    if state == game.state.inGame or state == game.state.inventory then log.draw() end
+    log.draw()
 end
 
 -- function that handle key inputs
@@ -77,7 +78,10 @@ function love.keypressed(key, scancode, isRepeat)
             player.interact()
         end
         if key == ctrl.useGlace then
-            player.consumeGlace()
+            player.consumeForOxygen('glace', cfg.player.oxygenRestore.glace)
+        end
+        if key == ctrl.useOxygen then
+            player.consumeForOxygen('oxygene', cfg.player.oxygenRestore.oxygene)
         end
     end
 end

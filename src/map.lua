@@ -244,4 +244,17 @@ function map.isInBounds(x, y)
     return true
 end
 
+-- return true if a placed object with the given id is on or around the given tile
+function map.findObjectAround(tileX, tileY, objectId)
+    for i = tileX - 1, tileX + 1 do
+        for j = tileY - 1, tileY + 1 do
+            if map.isInBounds(i, j) and map.tiles[j][i].object ~= nil
+               and map.tiles[j][i].object.id == objectId then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 return map

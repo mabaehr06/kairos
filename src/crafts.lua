@@ -4,6 +4,7 @@ local map = require "src.map"
 local camera = require "src.camera"
 local game = require "src.game"
 local log = require "src.debug.log"
+local power = require "src.power"
 
 local crafts = {}
 
@@ -57,6 +58,7 @@ function crafts.place(x, y, button)
         tile.containObject = true
         player.inventory[game.selectedObject.id] = player.inventory[game.selectedObject.id] - 1
         log.add(string.format("%s posé", game.selectedObject.display))
+        power.onObjectPlaced(game.selectedObject.id)
         game.selectedObject = nil
     else
         log.add("Impossible de poser ici")

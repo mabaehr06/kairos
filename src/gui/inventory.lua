@@ -6,6 +6,7 @@ local rocket = require "src.rocket"
 local crafts = require "src.crafts"
 local utils = require "src.utils"
 local log = require "src.debug.log"
+local power = require "src.power"
 
 local inventory = {}
 
@@ -43,6 +44,9 @@ function inventory.drawRessources()
         local q = player.inventory[r.id]
         love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
     end
+
+    yActual = yActual + 30 * 2
+    love.graphics.print(string.format("Électricité: %d/%d", power.current, power.getCapacity()), x, yActual)
     return
 end
 

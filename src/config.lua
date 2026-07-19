@@ -25,7 +25,8 @@ return {
         },
         visibility = 6,
         maxOxygen = 25,
-        oxygenTime = 30 -- in seconds
+        oxygenTime = 30, -- in seconds
+        oxygenRestore = { glace = 1, oxygene = 5 }
     },
     map = {
         tileSize = 64,

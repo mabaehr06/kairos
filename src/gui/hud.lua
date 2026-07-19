@@ -3,6 +3,7 @@ local map = require "src.map"
 local items = require "src.items"
 local cfg = require "src.config"
 local cycle = require "src.cycle"
+local power = require "src.power"
 
 local sw, sh = love.graphics.getDimensions()
 
@@ -47,12 +48,23 @@ function hud.drawTime()
     love.graphics.print(text, sw - 300, 10)
 end
 
+function hud.drawPower()
+    local pActual = power.current
+    local pMax = power.getCapacity()
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print(string.format("Élec: %d/%d", pActual, pMax), 50, sh - 100)
+end
+
 function hud.draw()
     -- Oxygen interface
     hud.drawOxygen()
 
     -- Time interface
     hud.drawTime()
+
+    -- Power
+    hud.drawPower()
 end
 
 return hud
