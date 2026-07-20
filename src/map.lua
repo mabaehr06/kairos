@@ -114,10 +114,10 @@ function map.generateRessources()
 end
 
 -- map load
--- function map.load()
---     map.create()
---     map.generateRessources()
--- end
+function map.load()
+    map.create()
+    map.generateRessources()
+end
 
 -- map update
 function map.update(dt)

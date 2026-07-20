@@ -2,6 +2,7 @@ local cfg = require "src.config"
 
 function love.conf(t)
     t.window.title = "Kairos"
+    t.identity = "kairos"
 
     t.window.height = cfg.graphics.resolution
     t.window.width = t.window.height * (16 / 9)

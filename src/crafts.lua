@@ -8,7 +8,9 @@ local power = require "src.power"
 
 local crafts = {}
 
-crafts.queue = {}
+function crafts.load()
+    crafts.queue = {}
+end
 
 
 function crafts.start(object)

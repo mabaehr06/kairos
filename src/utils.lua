@@ -24,4 +24,14 @@ function utils.isPointInRect(px, py, rx, ry, rw, rh)
     return px >= rx and px <= rx + rw and py >= ry and py <= ry + rh
 end
 
+
+-- help to format the time (from seconds to X min Y s)
+function utils.formatTime(seconds)
+    local min = math.floor(seconds / 60)
+    local sec = seconds % 60
+
+    return string.format("%d min %d s", min, sec)
+end
+
+
 return utils

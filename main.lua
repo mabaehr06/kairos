@@ -10,6 +10,9 @@ local game = require "src.game"
 local crafts = require "src.crafts"
 local inventory = require "src.gui.inventory"
 local power = require "src.power"
+local utils = require "src.utils"
+local menu = require "src.gui.menu"
+local endscreen = require "src.gui.endscreen"
 
 -- function that load everything the program need at the launch of the program
 function love.load()
@@ -25,6 +28,7 @@ function love.load()
     love.graphics.setFont(love.graphics.newFont(24))
     cycle.load()
     power.load()
+    crafts.load()
 end
 
 -- function that update every module
@@ -43,18 +47,21 @@ end
 
 -- function that draw eve-ry-thing
 function love.draw()
-    love.graphics.push() -- use is to keep memory of the position before the translation
-    love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
+    if game.stateSelected == game.state.inGame then
+        love.graphics.push() -- use is to keep memory of the position before the translation
+        love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
 
-    map.draw() -- used to draw the map 
-    rocket.draw() -- used to draw the rocket (lol)
-    player.draw() -- used to draw the player (lol, again)
+        map.draw() -- used to draw the map 
+        rocket.draw() -- used to draw the rocket (lol)
+        player.draw() -- used to draw the player (lol, again)
 
-    love.graphics.pop() -- we go back to before the translation, so we will be able to draw later the gui without any difficulties
-
+        love.graphics.pop() -- we go back to before the translation, so we will be able to draw later the gui without any difficulties
+        
+        log.draw()
+    end
+    
     gui.draw()
 
-    log.draw()
 end
 
 -- function that handle key inputs
@@ -84,12 +91,21 @@ function love.keypressed(key, scancode, isRepeat)
             player.consumeForOxygen('oxygene', cfg.player.oxygenRestore.oxygene)
         end
     end
+
+
+    if key == ctrl.reset then
+        game.reset()
+    end
 end
 
 function love.mousepressed(x, y, button)
     local state = game.stateSelected
 
-    if state == game.state.inventory then
+    if state == game.state.menu then
+        menu.mousepressed(x, y, button)
+    elseif state == game.state.victory or state == game.state.defeat then
+        endscreen.mousepressed(x, y, button)
+    elseif state == game.state.inventory then
         inventory.mousepressed(x, y, button)
     elseif state == game.state.inGame then
         crafts.place(x, y, button)

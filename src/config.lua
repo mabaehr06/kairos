@@ -13,7 +13,8 @@ return {
         interact = 'f',
         useGlace = 'c',
         inventory = 'e',
-        useOxygen = 'v'
+        useOxygen = 'v',
+        reset = 'r'
     },
     player = {
         scale = 0.7,

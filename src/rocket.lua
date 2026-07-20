@@ -15,8 +15,6 @@ rocket.size.x = cfg.rocket.sizeX
 rocket.size.y = cfg.rocket.sizeY
 
 rocket.maximalStep = #items.rocket
-rocket.currentStep = 1
-rocket.repaired = false
 
 function rocket.load()
     local mapWidth, mapHeight = map.getWidth(), map.getHeight()
@@ -31,6 +29,8 @@ function rocket.load()
         end
     end
 
+    rocket.currentStep = 1
+    rocket.repaired = false
 end
 
 function rocket.draw()
