@@ -33,5 +33,20 @@ function utils.formatTime(seconds)
     return string.format("%d min %d s", min, sec)
 end
 
+-- SOUND
+-- function utils.playsound(filePath, volume, pitch)
+--     local sound = love.audio.newSource(filePath, "stream")
+
+--     if volume ~= nil then
+--         sound:setVolume(volume)
+--     end
+
+--     if pitch ~= nil then
+--         sound:setPitch(pitch)
+--     end
+
+--     sound:play()
+-- end
+
 
 return utils

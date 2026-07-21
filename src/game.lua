@@ -1,6 +1,7 @@
 local cfg = require "src.config"
 local log = require "src.debug.log"
 local save = require "src.save"
+local utils = require "src.utils"
 
 local game = {}
 
@@ -16,6 +17,7 @@ game.state = {
 function game.load()
     game.totalTime = 0
     game.stateSelected = game.state.menu -- firstState 
+    -- utils.playsound("assets/audio/music/background.mp3", 1, 1)
 end
 
 function game.update(dt)

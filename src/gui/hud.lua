@@ -15,11 +15,12 @@ function hud.drawOxygen()
     local oxygen = player.oxygen
     local maxOxygen = cfg.player.maxOxygen
     local oxygenPrct = (oxygen / maxOxygen) * 100
+    local ratio = oxygen / maxOxygen
 
     local colOxyDanger    = {255, 0, 0}
     local colOxyAttention = {221, 215, 9}
     local colOxyGood      = {0, 255, 0}
-    local colOxyPerfect   = {200, 200, 255}
+    local colOxyPerfect   = {27, 129, 196}
 
     -- first tier = danger, second tier = attention, last tier = good, and perfect is just perfect
     local color = (oxygenPrct < 33 and colOxyDanger)
@@ -28,17 +29,20 @@ function hud.drawOxygen()
                or colOxyPerfect
 
     -- Draw Part
-    local font = love.graphics.getFont()
-    local finalOxygenText = string.format("Oxygen: %d/%d", oxygen, maxOxygen)
+    local barWidth, barHeight = 200, 30
+    local x, y = 50, sh - 50
 
-    -- Back Oxygen Rectangle
-    local fow, foh = font:getWidth(finalOxygenText), font:getHeight()
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle('fill', 50, sh-50, fow, foh)
+    -- background of the bar
+    love.graphics.setColor(0.15, 0.15, 0.15)
+    love.graphics.rectangle('fill', x, y, barWidth, barHeight)
 
-    -- Oxygen Text
+    -- fill of the bar
     love.graphics.setColor(love.math.colorFromBytes(color))
-    love.graphics.print(finalOxygenText, 50, sh - 50)
+    love.graphics.rectangle('fill', x, y, barWidth * ratio, barHeight)
+
+    -- the text
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print(string.format("%d/%d", oxygen, maxOxygen), x + 5, y + 5)
 end
 
 function hud.drawTime()
@@ -53,7 +57,7 @@ function hud.drawPower()
     local pMax = power.getCapacity()
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(string.format("Élec: %d/%d", pActual, pMax), 50, sh - 100)
+    love.graphics.print(string.format("Électricité: %d/%d", pActual, pMax), 50, sh - 100)
 end
 
 function hud.draw()

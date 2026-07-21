@@ -14,7 +14,7 @@ function inventory.drawRessources()
     local sw, sh = love.graphics.getDimensions()
     local x, y = 300, 200
     
-    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.setColor(0, 0, 0, 0.1)
     love.graphics.rectangle('fill', 0, 0, sw, sh)
 
     love.graphics.setColor(1, 1, 1)
