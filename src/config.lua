@@ -24,9 +24,9 @@ return {
             x = 0,
             y = 0
         },
-        visibility = 6,
-        maxOxygen = 25,
-        oxygenTime = 30, -- in seconds
+        visibility = 5,
+        maxOxygen = 20,
+        oxygenTime = 27, -- in seconds
         oxygenRestore = { glace = 1, oxygene = 5 }
     },
     map = {
@@ -34,7 +34,7 @@ return {
         width = 50,
         height = 50,
         ressources = {
-            spawningDelay = 30, -- in seconds
+            spawningDelay = 25, -- in seconds
             spawnRessources = 20,
             maxRessources = 50
         }
