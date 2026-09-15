@@ -1,6 +1,8 @@
-# Kairos Kairos est un jeu de survie 2D développé en Lua avec [LÖVE](https://love2d.org).
-Vo
-Vs êtes bloqué sur la Lune : récoltez des ressources, réparez votre fusée et décollez le plus vite possible — avant de manquer d'oxygène.
+# Kairos
+
+Kairos est un jeu de survie 2D développé en Lua avec [LÖVE](https://love2d.org).
+
+Vous êtes bloqué sur la Lune : récoltez des ressources, réparez votre fusée et décollez le plus vite possible — avant de manquer d'oxygène.
 
 
 # Installation
