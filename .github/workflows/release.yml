@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*'] # se déclenche sur : git tag vX.X.X && git push --tags
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GAME_NAME: Kairos
+  LOVE_VERSION: "11.5"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---------- 1. Le .love (zip du jeu, main.lua à la racine) ----------
+      - name: Packager le .love
+        run: |
+          test -f main.lua || { echo "::error::main.lua doit être à la racine du repo"; exit 1; }
+          mkdir -p dist
+          zip -9 -r "$PWD/dist/$GAME_NAME.love" . \
+            -x '.git*' -x 'dist/*' -x '*.md' -x 'LICENSE'
+
+      # ---------- 2. Windows x64 ----------
+      - name: Build Windows
+        run: |
+          curl -fsSL -o love-win.zip \
+            "https://github.com/love2d/love/releases/download/$LOVE_VERSION/love-$LOVE_VERSION-win64.zip"
+          unzip -q love-win.zip
+          mv love-*-win64 win
+          cat win/love.exe "dist/$GAME_NAME.love" > "win/$GAME_NAME.exe"
+          rm -f win/love.exe win/lovec.exe win/changes.txt win/readme.txt
+          (cd win && zip -9 -r "../dist/$GAME_NAME-windows-x64.zip" .)
+
+      # ---------- 3. Linux (AppImage) ----------
+      - name: Build Linux
+        run: |
+          curl -fsSL -o love.AppImage \
+            "https://github.com/love2d/love/releases/download/$LOVE_VERSION/love-$LOVE_VERSION-x86_64.AppImage"
+          chmod +x love.AppImage
+          ./love.AppImage --appimage-extract >/dev/null
+
+          # on fusionne le jeu dans le binaire love de l'AppDir
+          cat squashfs-root/bin/love "dist/$GAME_NAME.love" > fused
+          mv fused squashfs-root/bin/love
+          chmod +x squashfs-root/bin/love
+
+          curl -fsSL -o appimagetool \
+            "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool
+          ARCH=x86_64 ./appimagetool --appimage-extract-and-run \
+            squashfs-root "dist/$GAME_NAME-linux-x86_64.AppImage"
+
+      # ---------- 4. Sortie ----------
+      - name: Artefacts (utile pour les runs manuels)
+        uses: actions/upload-artifact@v4
+        with:
+          name: builds
+          path: dist/*
+
+      - name: Créer la release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/*.AppImage
+            dist/*.love
+          generate_release_notes: true

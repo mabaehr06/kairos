@@ -24,7 +24,7 @@
 -
 
 ## Architecture
--
+
 
 ## Problèmes
 Pour tout problème trouvé, merci d'ouvrir une issue avec le nom du problème ainsi qu'une description pour m'aider dans la résolution de l'erreur.
