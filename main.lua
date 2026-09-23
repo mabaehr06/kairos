@@ -13,6 +13,7 @@ local power = require "src.power"
 local utils = require "src.utils"
 local menu = require "src.gui.menu"
 local endscreen = require "src.gui.endscreen"
+local fonts = require "src.fonts"
 
 -- function that load everything the program need at the launch of the program
 function love.load()
@@ -25,7 +26,7 @@ function love.load()
     map.generateRessources()
     player.load()
     camera.load()
-    love.graphics.setFont(love.graphics.newFont(24))
+    fonts.load()
     cycle.load()
     power.load()
     crafts.load()
@@ -47,6 +48,9 @@ end
 
 -- function that draw eve-ry-thing
 function love.draw()
+    -- setFont is a global state: every frame start back from the game font,
+    love.graphics.setFont(fonts.hud)
+
     if game.stateSelected == game.state.inGame then
         love.graphics.push() -- use is to keep memory of the position before the translation
         love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
