@@ -1,19 +1,33 @@
-local cfg = require "src.config"
-local player = require "src.player"
-local map = require "src.map"
-local camera = require "src.camera"
-local log = require "src.debug.log"
-local gui = require "src.gui.gui"
-local cycle = require "src.cycle"
+local cfg    = require "src.config"
+local game   = require "src.game"
+local fonts  = require "src.fonts"
+local map    = require "src.map"
 local rocket = require "src.rocket"
-local game = require "src.game"
+local player = require "src.player"
+local camera = require "src.camera"
+local cycle  = require "src.cycle"
+local power  = require "src.power"
 local crafts = require "src.crafts"
-local inventory = require "src.gui.inventory"
-local power = require "src.power"
-local utils = require "src.utils"
-local menu = require "src.gui.menu"
-local endscreen = require "src.gui.endscreen"
-local fonts = require "src.fonts"
+
+local scenes = {
+    [game.state.menu]      = require "src.scenes.menu",
+    [game.state.inGame]    = require "src.scenes.play",
+    [game.state.inventory] = require "src.scenes.play",
+    [game.state.victory]   = require "src.scenes.ending",
+    [game.state.defeat]    = require "src.scenes.ending"
+}
+
+local currentScene = nil
+
+-- function that return the scene of the current state, and call its enter() the first time we get in it
+local function getScene()
+    local scene = scenes[game.stateSelected]
+    if scene ~= currentScene then
+        currentScene = scene
+        if scene ~= nil and scene.enter ~= nil then scene.enter() end
+    end
+    return scene
+end
 
 -- function that load everything the program need at the launch of the program
 function love.load()
@@ -32,86 +46,29 @@ function love.load()
     crafts.load()
 end
 
--- function that update every module
+-- from here, every callback only give the hand to the scene of the current state
 function love.update(dt)
-    local state = game.stateSelected
-
-    if state == game.state.inGame or state == game.state.inventory then
-        game.update(dt)
-        player.update(dt)
-        camera.update(dt)
-        map.update(dt)
-        crafts.update(dt)
-        power.update(dt)
-    end
+    local scene = getScene()
+    if scene ~= nil and scene.update ~= nil then scene.update(dt) end
 end
 
--- function that draw eve-ry-thing
 function love.draw()
     -- setFont is a global state: every frame start back from the game font,
     love.graphics.setFont(fonts.hud)
 
-    if game.stateSelected == game.state.inGame then
-        love.graphics.push() -- use is to keep memory of the position before the translation
-        love.graphics.translate(-camera.x, -camera.y) -- camera translation thing
-
-        map.draw() -- used to draw the map 
-        rocket.draw() -- used to draw the rocket (lol)
-        player.draw() -- used to draw the player (lol, again)
-
-        love.graphics.pop() -- we go back to before the translation, so we will be able to draw later the gui without any difficulties
-        
-        log.draw()
-    end
-    
-    gui.draw()
-
+    local scene = getScene()
+    if scene ~= nil then scene.draw() end
 end
 
--- function that handle key inputs
 function love.keypressed(key, scancode, isRepeat)
-    local ctrl = cfg.controls
-    local state = game.stateSelected
-    local gs = game.state
+    -- quitting the game works from every screen
+    if key == cfg.controls.quit then love.event.quit() end
 
-    -- quit the game
-    if key == ctrl.quit then love.event.quit() end
-
-    -- inventory handler
-    if key == ctrl.inventory then
-        if state == gs.inGame then game.changeState(gs.inventory)
-        elseif state == gs.inventory then game.changeState(gs.inGame) end
-    end
-
-    -- interaction handler
-    if state == gs.inGame then
-        if key == ctrl.interact then
-            player.interact()
-        end
-        if key == ctrl.useGlace then
-            player.consumeForOxygen('glace', cfg.player.oxygenRestore.glace)
-        end
-        if key == ctrl.useOxygen then
-            player.consumeForOxygen('oxygene', cfg.player.oxygenRestore.oxygene)
-        end
-    end
-
-
-    if key == ctrl.reset then
-        game.reset()
-    end
+    local scene = getScene()
+    if scene ~= nil and scene.keypressed ~= nil then scene.keypressed(key) end
 end
 
 function love.mousepressed(x, y, button)
-    local state = game.stateSelected
-
-    if state == game.state.menu then
-        menu.mousepressed(x, y, button)
-    elseif state == game.state.victory or state == game.state.defeat then
-        endscreen.mousepressed(x, y, button)
-    elseif state == game.state.inventory then
-        inventory.mousepressed(x, y, button)
-    elseif state == game.state.inGame then
-        crafts.place(x, y, button)
-    end
+    local scene = getScene()
+    if scene ~= nil and scene.mousepressed ~= nil then scene.mousepressed(x, y, button) end
 end

@@ -1,14 +1,13 @@
 local fonts = {}
 
-local files = {
-    title = "assets/fonts/Orbitron-Bold.ttf",
-    body  = "assets/fonts/Exo2.ttf"
-}
+local file = "assets/fonts/Alexandria.ttf"
 
 -- function that create a font from a file
+-- 'light' only hint the font vertically: measured sharper than the default mode, without the
+-- hard edges of the 'mono' mode, which drops the antialiasing completely
 local function newFont(path, size)
     if love.filesystem.getInfo(path) ~= nil then
-        return love.graphics.newFont(path, size)
+        return love.graphics.newFont(path, size, "light")
     end
     return love.graphics.newFont(size)
 end
@@ -17,10 +16,10 @@ end
 function fonts.load()
     local height = love.graphics.getHeight()
 
-    fonts.title  = newFont(files.title, math.floor(height * 0.10))
-    fonts.button = newFont(files.body,  math.floor(height * 0.032))
-    fonts.hud    = newFont(files.body,  math.floor(height * 0.022))
-    fonts.small  = newFont(files.body,  math.floor(height * 0.018))
+    fonts.title  = newFont(file, math.floor(height * 0.085))
+    fonts.button = newFont(file, math.floor(height * 0.032))
+    fonts.hud    = newFont(file, math.floor(height * 0.022))
+    fonts.small  = newFont(file, math.floor(height * 0.018))
 end
 
 return fonts

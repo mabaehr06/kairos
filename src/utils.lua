@@ -25,6 +25,18 @@ function utils.isPointInRect(px, py, rx, ry, rw, rh)
 end
 
 
+-- this function round a number to the closest whole pixel
+-- a text drawn on a half pixel is blurry, every position of the interface goes through here
+function utils.round(number)
+    return math.floor(number + 0.5)
+end
+
+-- this function draw a text centered in the given width, on whole pixels
+function utils.printCentered(text, x, y, width)
+    local font = love.graphics.getFont()
+    love.graphics.print(text, utils.round(x + (width - font:getWidth(text)) / 2), utils.round(y))
+end
+
 -- help to format the time (from seconds to X min Y s)
 function utils.formatTime(seconds)
     local min = math.floor(seconds / 60)
