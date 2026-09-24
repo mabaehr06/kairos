@@ -18,7 +18,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ---------- 1. Le .love (zip du jeu, main.lua à la racine) ----------
+      # -- 0. Injection de la version dans le fichier 
+      - name: Injecter la version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then v="$GITHUB_REF_NAME"; else v="dev-${GITHUB_SHA::7}"; fi
+          echo "return \"$v\"" > src/version.lua
+
+      # -- 1. Le .love (zip du jeu, main.lua à la racine)
       - name: Packager le .love
         run: |
           test -f main.lua || { echo "::error::main.lua doit être à la racine du repo"; exit 1; }
@@ -26,7 +32,7 @@ jobs:
           zip -9 -r "$PWD/dist/$GAME_NAME.love" . \
             -x '.git*' -x 'dist/*' -x '*.md' -x 'LICENSE'
 
-      # ---------- 2. Windows x64 ----------
+      # -- 2. Build: Windows x64
       - name: Build Windows
         run: |
           curl -fsSL -o love-win.zip \
@@ -37,7 +43,7 @@ jobs:
           rm -f win/love.exe win/lovec.exe win/changes.txt win/readme.txt
           (cd win && zip -9 -r "../dist/$GAME_NAME-windows-x64.zip" .)
 
-      # ---------- 3. Linux (AppImage) ----------
+      # -- 3. Build: Linux (via AppImage)
       - name: Build Linux
         run: |
           curl -fsSL -o love.AppImage \
@@ -56,7 +62,7 @@ jobs:
           ARCH=x86_64 ./appimagetool --appimage-extract-and-run \
             squashfs-root "dist/$GAME_NAME-linux-x86_64.AppImage"
 
-      # ---------- 4. Sortie ----------
+      # -- 4. Création de l'artéfact (sortie des builds)
       - name: Artefacts (utile pour les runs manuels)
         uses: actions/upload-artifact@v4
         with:
