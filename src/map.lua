@@ -5,13 +5,38 @@ local map = {}
 local firstGenerate = false
 local ressourcesTime = 0
 local ressourcesCount = 0
+local shadowImage = nil
 
 map.tiles = {}
+
+-- function that create a soft, round, light-grey drop shadow once
+-- it is used under every ressource
+local function getShadowImage()
+    if shadowImage ~= nil then return shadowImage end
+
+    local size = 128
+    local center = size / 2
+    local imgData = love.image.newImageData(size, size)
+
+    imgData:mapPixel(function(x, y)
+        local dx, dy = x - center, y - center
+        local dist = math.sqrt(dx * dx + dy * dy) / center
+        local falloff = math.max(0, 1 - dist)
+        falloff = falloff * falloff * (3 - 2 * falloff)
+        return 0.93, 0.93, 0.95, falloff * 0.85
+    end)
+
+    shadowImage = love.graphics.newImage(imgData)
+    return shadowImage
+end
 
 -- function that create the map.
 -- it creates every tiles based on the width and height given in src.config
 -- it generate a random tint for the tile
 function map.create()
+    firstGenerate = false
+    ressourcesCount = 0
+
     for y = 1, cfg.map.height do
         map.tiles[y] = {}
         for x = 1, cfg.map.width do
@@ -155,23 +180,19 @@ function map.drawRessources(x, y)
     local tsize = cfg.map.tileSize
 
     if ressource ~= nil then
+        local image = ressource.image
+        local size = 0.8 * tsize
+        local scale = size / image:getWidth()
 
-        love.graphics.setColor(love.math.colorFromBytes(ressource.color))
+        -- soft shadow so the ressource stands out against the grey ground
+        local shadow = getShadowImage()
+        local shadowSize = 0.98 * tsize
+        local shadowScale = shadowSize / shadow:getWidth()
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(shadow, tile.pos.xc, tile.pos.yc, 0, shadowScale, shadowScale, shadow:getWidth() / 2, shadow:getHeight() / 2)
 
-        -- sphere high left
-        local tSizeUpperLeft = 0.3 * tsize
-        local tCoordsUpperLeft = 0.12 * tsize
-        love.graphics.circle('fill', tile.pos.xc - tCoordsUpperLeft, tile.pos.yc - tCoordsUpperLeft, tSizeUpperLeft)
-
-        -- sphere middle right
-        local tSizeMiddleRight = 0.33 * tsize
-        local tCoordsMiddleRight = 0.07 * tsize
-        love.graphics.circle('fill', tile.pos.xc + tCoordsMiddleRight, tile.pos.yc, tSizeMiddleRight)
-
-        -- sphere low left
-        local tSizeLowLeft = 0.22 * tsize
-        local tCoordsLowLeft = 0.12 * tsize
-        love.graphics.circle('fill', tile.pos.xc - tCoordsLowLeft, tile.pos.yc + tCoordsLowLeft, tSizeLowLeft)
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(image, tile.pos.xc, tile.pos.yc, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
     end
 end
 

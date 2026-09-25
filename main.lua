@@ -1,6 +1,7 @@
 local cfg    = require "src.config"
 local game   = require "src.game"
 local fonts  = require "src.fonts"
+local items  = require "src.items"
 local map    = require "src.map"
 local rocket = require "src.rocket"
 local player = require "src.player"
@@ -35,6 +36,7 @@ function love.load()
     math.randomseed(os.time())
     cfg.graphics.width = love.graphics.getWidth()
     cfg.graphics.height = love.graphics.getHeight()
+    items.loadImages()
     map.create()
     rocket.load()
     map.generateRessources()

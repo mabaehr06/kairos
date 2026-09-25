@@ -44,6 +44,14 @@ items.rocket =
     -- { id = 'carburant',    display = "Carburant",    cost = { regolithe = 0 } },
 }
 
+-- function that load the sprite of every ressource, from 'assets/ressources'
+function items.loadImages()
+    for i = 1, #items.ressources do
+        local r = items.ressources[i]
+        r.image = love.graphics.newImage("assets/ressources/" .. r.id .. ".png")
+    end
+end
+
 function items.getRessourceById(id)
     for i = 1, #items.ressources do
         if items.ressources[i].id == id then
