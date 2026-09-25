@@ -15,17 +15,23 @@ rocket.size.x = cfg.rocket.sizeX
 rocket.size.y = cfg.rocket.sizeY
 
 rocket.maximalStep = #items.rocket
+rocket.images = {}
+
+-- function that load the sprite for each repair state (0 = at the start, 5 = fully repaired)
+function rocket.loadImages()
+    for step = 0, rocket.maximalStep do
+        rocket.images[step] = love.graphics.newImage("assets/rocket/rocket_" .. step .. ".png")
+    end
+end
 
 function rocket.load()
     local mapWidth, mapHeight = map.getWidth(), map.getHeight()
 
     rocket.pos.x, rocket.pos.y = math.random(1, mapWidth - (rocket.size.x - 1)), math.random(1, mapHeight - (rocket.size.y - 1))
-    local rocketColor = {4, 86, 217}
 
     for x = rocket.pos.x, rocket.pos.x + rocket.size.x - 1 do
         for y = rocket.pos.y, rocket.pos.y + rocket.size.y - 1 do
             map.tiles[y][x].containObject = true
-            map.tiles[y][x].tint = rocketColor
         end
     end
 
@@ -35,12 +41,16 @@ end
 
 function rocket.draw()
     local ts = cfg.map.tileSize
-    love.graphics.setColor(love.math.colorFromBytes(4, 86, 217))
-    love.graphics.rectangle("fill",
-        (rocket.pos.x - 1) * ts,
-        (rocket.pos.y - 1) * ts,
-        cfg.rocket.sizeX * ts,
-        cfg.rocket.sizeY * ts)
+    local completedSteps = rocket.repaired and rocket.maximalStep or (rocket.currentStep - 1)
+    local image = rocket.images[completedSteps]
+
+    local x = (rocket.pos.x - 1) * ts
+    local y = (rocket.pos.y - 1) * ts
+    local scaleX = (cfg.rocket.sizeX * ts) / image:getWidth()
+    local scaleY = (cfg.rocket.sizeY * ts) / image:getHeight()
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
 end
 
 function rocket.isPlayerAround()
