@@ -10,6 +10,14 @@ function camera.load()
     camera.y = player.y
 end 
 
+-- function that return the camera position on one axis, following the player
+local function followAxis(playerPos, screenSize, mapSize)
+    if mapSize <= screenSize then
+        return (mapSize - screenSize) / 2
+    end
+    return utils.clamp(playerPos - screenSize / 2, 0, mapSize - screenSize)
+end
+
 function camera.update(dt)
 
     -- better reading comprehension
@@ -21,8 +29,8 @@ function camera.update(dt)
     -- player.x - cgw/2         = the player is centered on the screen
     -- 0                        = the camera hide the left edge of the screen
     -- map.getPixelWidth - cgw  = the camera hide the right edge of the screen
-    camera.x = utils.clamp(player.x - cgw / 2, 0, map.getPixelWidth() - cgw)
-    camera.y = utils.clamp(player.y - cgh / 2, 0, map.getPixelHeight() - cgh)
+    camera.x = followAxis(player.x, cgw, map.getPixelWidth())
+    camera.y = followAxis(player.y, cgh, map.getPixelHeight())
 end
 
 -- convert screen coordinates to world coordinates (reverse of the draw translate)

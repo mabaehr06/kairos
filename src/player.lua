@@ -187,8 +187,8 @@ function player.load()
         player.x = map.tiles[tileY][tileX].pos.xc
         player.y = map.tiles[tileY][tileX].pos.yc
     else
-        player.x = cfg.player.start_x
-        player.y = cfg.player.start_y
+        player.x = cfg.player.spawn.x
+        player.y = cfg.player.spawn.y
     end
 
     player.size = cfg.map.tileSize * cfg.player.scale -- set the size of the player, based on the size of a tile, and on the scale

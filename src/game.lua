@@ -39,7 +39,6 @@ function game.reset()
     game.selectedObject = nil
     map.load()
     rocket.load()
-    map.generateRessources()
     player.load()
     power.load()
     crafts.load()
