@@ -81,8 +81,8 @@ docs/                 documentation du projet
 ## Configuration
 
 `src/config.lua` regroupe l'intégralité des valeurs de gameplay : vitesse du joueur, réserve d'oxygène, taille de la carte, densité des ressources, durée du cycle, rendement des panneaux. Aucune de ces valeurs n'est codée en dur ailleurs, c'est donc le seul fichier à toucher pour équilibrer le jeu.
-
-L'interface se place en fractions de la taille de la fenêtre : le jeu suit n'importe quelle résolution, et le plein écran se règle dans `conf.lua`.
+le jeu peut gérer n'importe quelle résolution.
+Le plein écran et l'écran utilisé se règlent dans la section `graphics` de `src/config.lua`.
 
 Le meilleur temps est stocké dans `best.txt`, dans le répertoire de sauvegarde LÖVE :
 

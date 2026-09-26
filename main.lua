@@ -32,6 +32,8 @@ end
 
 -- function that load everything the program need at the launch of the program
 function love.load()
+    love.window.setFullscreen(cfg.graphics.fullscreen) -- handle fullscreen at the launch of the program
+
     game.load()
     math.randomseed(os.time())
     cfg.graphics.width = love.graphics.getWidth()

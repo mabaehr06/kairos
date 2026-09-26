@@ -7,11 +7,12 @@ function love.conf(t)
     t.window.height = cfg.graphics.resolution
     t.window.width = t.window.height * (16 / 9)
 
-    t.window.fullscreen = true -- if enabled, resolution' setting in config file is useless
+    -- a window opened directly in fullscreen lands where WSLg decides, whatever 'display' says
+    t.window.fullscreen = false
     t.window.borderless = false
     t.window.vsync = true
 
-    t.window.display = 0
+    t.window.display = cfg.graphics.display
 
     cfg.graphics.width = 0
     cfg.graphics.height = 0

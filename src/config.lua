@@ -1,6 +1,8 @@
 return {
     graphics = {
-        resolution = 1080
+        resolution = 1080, -- height of the window when not in fullscreen
+        fullscreen = true,
+        display = 1 -- screen of the game, counted from 1 (1 = main screen)
     },
     controls = {
         quit = 'escape',

@@ -5,8 +5,6 @@ local cfg = require "src.config"
 local cycle = require "src.cycle"
 local power = require "src.power"
 
-local sw, sh = love.graphics.getDimensions()
-
 local hud = {}
 
 function hud.drawOxygen()
@@ -30,7 +28,7 @@ function hud.drawOxygen()
 
     -- Draw Part
     local barWidth, barHeight = 200, 30
-    local x, y = 50, sh - 50
+    local x, y = 50, love.graphics.getHeight() - 50
 
     -- background of the bar
     love.graphics.setColor(0.15, 0.15, 0.15)
@@ -49,7 +47,7 @@ function hud.drawTime()
     local text = cycle.format()
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(text, sw - 300, 10)
+    love.graphics.print(text, love.graphics.getWidth() - 300, 10)
 end
 
 function hud.drawPower()
@@ -57,18 +55,13 @@ function hud.drawPower()
     local pMax = power.getCapacity()
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(string.format("Électricité: %d/%d", pActual, pMax), 50, sh - 100)
+    love.graphics.print(string.format("Électricité: %d/%d", pActual, pMax), 50, love.graphics.getHeight() - 100)
 end
 
 function hud.draw()
-    -- Oxygen interface
-    hud.drawOxygen()
-
-    -- Time interface
-    hud.drawTime()
-
-    -- Power
-    hud.drawPower()
+    hud.drawOxygen() -- Oxygen interface
+    hud.drawTime() -- Time interface
+    hud.drawPower() -- Power
 end
 
 return hud
