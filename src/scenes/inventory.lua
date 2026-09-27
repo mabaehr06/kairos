@@ -7,6 +7,8 @@ local crafts = require "src.crafts"
 local utils = require "src.utils"
 local log = require "src.debug.log"
 local power = require "src.power"
+local hud  = require "src.gui.hud"
+local play = require "src.scenes.play"
 
 local inventory = {}
 
@@ -134,10 +136,26 @@ function inventory.drawRecipes()
     end
 end
 
+-- the game keep running while the inventory is opened, the oxygen does not wait for the player
+function inventory.update(dt)
+    play.update(dt)
+end
+
 function inventory.draw()
+    hud.draw()
     inventory.drawRessources()
     inventory.drawObjective()
     inventory.drawRecipes()
+end
+
+function inventory.keypressed(key)
+    if key == cfg.controls.inventory then
+        game.changeState(game.state.inGame)
+    end
+
+    if key == cfg.controls.reset then
+        game.reset()
+    end
 end
 
 -- handle a click inside the inventory screen (left click: launch a craft, right click: pick an owned object to place it)
