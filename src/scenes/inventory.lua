@@ -9,47 +9,89 @@ local log = require "src.debug.log"
 local power = require "src.power"
 local hud  = require "src.gui.hud"
 local play = require "src.scenes.play"
+local fonts = require "src.fonts"
 
 local inventory = {}
 
-function inventory.drawRessources()
+local colors = {
+    overlay     = {0, 0, 0, 0.55},
+    panelFill   = {0.10, 0.10, 0.11},
+    panelBorder = {0.30, 0.30, 0.31},
+    title       = {1, 1, 1},
+    text        = {0.75, 0.76, 0.79}
+}
+
+-- the two panels are placed in fraction of the window, so they follow any resolution
+local layout = {
+    marginX      = 0.06,
+    marginY      = 0.08,
+    marginBottom = 0.12,
+    panelGap     = 0.04,
+    panelWidth   = 0.42,
+    padding      = 40, -- inner padding of a panel, in pixels
+    titleHeight  = 60  -- room taken by the title of a panel, in pixels
+}
+
+-- function that return the rectangle of one of the two panels
+function inventory.getPanelRect(index)
     local sw, sh = love.graphics.getDimensions()
-    local x, y = 300, 200
-    
-    love.graphics.setColor(0, 0, 0, 0.1)
-    love.graphics.rectangle('fill', 0, 0, sw, sh)
+    local w = sw * layout.panelWidth
+    local x = sw * layout.marginX
 
-    love.graphics.setColor(1, 1, 1)
+    if index == 2 then
+        x = x + w + sw * layout.panelGap
+    end
 
+    return x, sh * layout.marginY, w, sh * (1 - layout.marginY - layout.marginBottom)
+end
+
+-- function that draw a titled panel: a filled rectangle with a thin border
+function inventory.drawPanel(x, y, w, h, title)
+    love.graphics.setColor(colors.panelFill)
+    love.graphics.rectangle('fill', x, y, w, h)
+
+    love.graphics.setLineWidth(1)
+    love.graphics.setColor(colors.panelBorder)
+    love.graphics.rectangle('line', x + 0.5, y + 0.5, w, h)
+
+    love.graphics.setFont(fonts.button)
+    love.graphics.setColor(colors.title)
+    love.graphics.print(title, x + layout.padding, y + 16)
+end
+
+function inventory.drawRessources(x, y)
+    local lineHeight = 30
+
+    love.graphics.setFont(fonts.hud)
+    love.graphics.setColor(colors.text)
 
     local yActual = y
 
-    for i = 1, #items.ressources do 
-        yActual = yActual + 30
+    for i = 1, #items.ressources do
         local r = items.ressources[i]
-        local q = player.inventory[r.id]
-        love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
+        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        yActual = yActual + lineHeight
     end
 
-    yActual = yActual + 30
-    for i = 1, #items.objects do
-        yActual = yActual + 30
-        local r = items.objects[i]
-        local q = player.inventory[r.id]
-        love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
-    end
-
-    yActual = yActual + 30
+    -- yActual = yActual + lineHeight
     for i = 1, #items.specials do
-        yActual = yActual + 30
         local r = items.specials[i]
-        local q = player.inventory[r.id]
-        love.graphics.print(string.format("%s : %d", r.display, q), x, yActual)
+        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        yActual = yActual + lineHeight
     end
 
-    yActual = yActual + 30 * 2
-    love.graphics.print(string.format("Électricité: %d/%d", power.current, power.getCapacity()), x, yActual)
-    return
+    yActual = yActual + lineHeight
+    for i = 1, #items.objects do
+        local r = items.objects[i]
+        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        yActual = yActual + lineHeight
+    end
+
+
+    yActual = yActual + lineHeight
+    love.graphics.print(string.format("Électricité : %d/%d", power.current, power.getCapacity()), x, yActual)
+
+    return yActual + lineHeight * 2
 end
 
 function inventory.returnCostMissing(step)
@@ -64,21 +106,20 @@ function inventory.returnCostMissing(step)
     return costMissing
 end
 
-function inventory.drawObjective()
-    local x, y = 300, cfg.graphics.height - 300
+function inventory.drawObjective(x, y)
+    love.graphics.setFont(fonts.button)
+    love.graphics.setColor(colors.title)
+    love.graphics.print(string.format("Objectif : %s", items.rocket[rocket.currentStep].display), x, y)
 
-    -- Rocket Current Mission
-    local obj = items.rocket[rocket.currentStep].display
-    local objText = string.format("Objectif: %s", obj)
-    love.graphics.print(objText, x, y)
+    love.graphics.setFont(fonts.hud)
+    love.graphics.setColor(colors.text)
 
-    -- Items Missing
     local missingCost = inventory.returnCostMissing(rocket.currentStep)
 
     local count = 0
     for ressource, cost in pairs(missingCost) do
-        local text = string.format("%s: %d/%d", items.getRessourceById(ressource).display, cost.inventory, cost.cost)
-        love.graphics.print(text, x, y + 30 + count * 30)
+        local text = string.format("%s : %d/%d", items.getRessourceById(ressource).display, cost.inventory, cost.cost)
+        love.graphics.print(text, x, y + 40 + count * 30)
         count = count + 1
     end
 end
@@ -87,18 +128,16 @@ inventory.recipeRects = {} -- clickable zones, rebuilt at every draw
 
 
 
-function inventory.drawRecipes()
-    local x, y = 1200, 200
+function inventory.drawRecipes(x, y)
     local lineHeight = 40
 
     inventory.recipeRects = {} -- reset: positions are recomputed each frame
 
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Fabrication :", x, y)
+    love.graphics.setFont(fonts.hud)
 
     for i = 1, #items.objects do
         local object = items.objects[i]
-        local lineY = y + i * lineHeight
+        local lineY = y + (i - 1) * lineHeight
 
         -- green if affordable, red otherwise (the specs indicator)
         if player.hasRessources(object.cost) then
@@ -127,9 +166,13 @@ function inventory.drawRecipes()
     end
 
     -- crafts in progress, below
-    love.graphics.setColor(1, 1, 1)
-    local queueY = y + (#items.objects + 2) * lineHeight
+    love.graphics.setFont(fonts.button)
+    love.graphics.setColor(colors.title)
+    local queueY = y + (#items.objects + 1) * lineHeight
     love.graphics.print("En cours :", x, queueY)
+
+    love.graphics.setFont(fonts.hud)
+    love.graphics.setColor(colors.text)
     for i = 1, #crafts.queue do
         local craft = crafts.queue[i]
         love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * lineHeight)
@@ -142,10 +185,19 @@ function inventory.update(dt)
 end
 
 function inventory.draw()
-    hud.draw()
-    inventory.drawRessources()
-    inventory.drawObjective()
-    inventory.drawRecipes()
+    local sw, sh = love.graphics.getDimensions()
+
+    love.graphics.setColor(colors.overlay)
+    love.graphics.rectangle('fill', 0, 0, sw, sh)
+
+    local x, y, w, h = inventory.getPanelRect(1)
+    inventory.drawPanel(x, y, w, h, "Ressources")
+    local objectiveY = inventory.drawRessources(x + layout.padding, y + layout.titleHeight)
+    inventory.drawObjective(x + layout.padding, objectiveY)
+
+    x, y, w, h = inventory.getPanelRect(2)
+    inventory.drawPanel(x, y, w, h, "Fabrication")
+    inventory.drawRecipes(x + layout.padding, y + layout.titleHeight)
 end
 
 function inventory.keypressed(key)
