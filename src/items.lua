@@ -13,7 +13,7 @@ items.ressources =
 
 items.specials =
 {
-    { id = 'oxygene', display = "Oxygène pur" }
+    { id = 'oxygene', display = "Oxygène pur", color = {128, 16, 16} }
 }
 
 items.objects =

@@ -59,36 +59,48 @@ function inventory.drawPanel(x, y, w, h, title)
     love.graphics.print(title, x + layout.padding, y + 16)
 end
 
-function inventory.drawRessources(x, y)
-    local lineHeight = 30
+-- function that draw one line of the inventory: its sprite if it has one, its color otherwise, then the name and the quantity
+function inventory.drawRow(x, y, size, item)
+    if item.image ~= nil then
+        local scale = size / item.image:getWidth()
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(item.image, x, y, 0, scale, scale)
+    elseif item.color ~= nil then
+        love.graphics.setColor(love.math.colorFromBytes(item.color))
+        love.graphics.rectangle('fill', x, y, size, size)
+    end
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
+    love.graphics.print(string.format("%s : %d", item.display, player.inventory[item.id]),
+        x + size + 12, y + (size - fonts.hud:getHeight()) / 2)
+end
+
+function inventory.drawRessources(x, y)
+    local lineHeight = 40
+    local iconSize = 30
 
     local yActual = y
 
     for i = 1, #items.ressources do
-        local r = items.ressources[i]
-        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        inventory.drawRow(x, yActual, iconSize, items.ressources[i])
         yActual = yActual + lineHeight
     end
 
-    -- yActual = yActual + lineHeight
     for i = 1, #items.specials do
-        local r = items.specials[i]
-        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        inventory.drawRow(x, yActual, iconSize, items.specials[i])
         yActual = yActual + lineHeight
     end
 
     yActual = yActual + lineHeight
     for i = 1, #items.objects do
-        local r = items.objects[i]
-        love.graphics.print(string.format("%s : %d", r.display, player.inventory[r.id]), x, yActual)
+        inventory.drawRow(x, yActual, iconSize, items.objects[i])
         yActual = yActual + lineHeight
     end
 
-
     yActual = yActual + lineHeight
+    love.graphics.setFont(fonts.hud)
+    love.graphics.setColor(colors.text)
     love.graphics.print(string.format("Électricité : %d/%d", power.current, power.getCapacity()), x, yActual)
 
     return yActual + lineHeight * 2
