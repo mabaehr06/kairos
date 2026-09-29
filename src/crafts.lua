@@ -24,7 +24,7 @@ function crafts.start(object)
         player.inventory[r] = player.inventory[r] - q
     end
 
-    table.insert(crafts.queue, {id = object.id, display = object.display, timeLeft = object.craftTime })
+    table.insert(crafts.queue, {id = object.id, display = object.display, timeLeft = object.craftTime, craftTime = object.craftTime })
     log.add(string.format("Fabrication lancée : %s (%ds)", object.display, object.craftTime))
 end
 

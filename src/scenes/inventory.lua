@@ -19,7 +19,9 @@ local colors = {
     panelFill   = {0.10, 0.10, 0.11},
     panelBorder = {0.30, 0.30, 0.31},
     title       = {1, 1, 1},
-    text        = {0.75, 0.76, 0.79}
+    text        = {0.75, 0.76, 0.79},
+    barBack     = {0.15, 0.15, 0.15},
+    barFill     = {0.40, 0.64, 0.86}
 }
 
 -- the two panels are placed in fraction of the window, so they follow any resolution
@@ -139,7 +141,21 @@ end
 
 inventory.recipeButtons = {} -- clickable zones, rebuilt at every draw
 
+-- function that draw one craft of the queue: its name, its remaining time, and how far it went
+function inventory.drawCraft(x, y, w, craft)
+    local barHeight = 14
+    local ratio = utils.clamp(1 - craft.timeLeft / craft.craftTime, 0, 1)
 
+    love.graphics.setFont(fonts.hud)
+    love.graphics.setColor(colors.text)
+    love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, y)
+
+    love.graphics.setColor(colors.barBack)
+    love.graphics.rectangle('fill', x, y + 30, w, barHeight)
+
+    love.graphics.setColor(colors.barFill)
+    love.graphics.rectangle('fill', x, y + 30, w * ratio, barHeight)
+end
 
 function inventory.drawRecipes(x, y, w)
     local buttonHeight = 60
@@ -181,8 +197,17 @@ function inventory.drawRecipes(x, y, w)
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
     for i = 1, #crafts.queue do
-        local craft = crafts.queue[i]
-        love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * 40)
+        if #crafts.queue == 0 then
+            love.graphics.setFont(fonts.hud)
+            love.graphics.setColor(colors.text)
+            love.graphics.print("Aucune fabrication en cours", x, queueY + 50)
+        end
+
+        for i = 1, #crafts.queue do
+            inventory.drawCraft(x, queueY + i * 50, w, crafts.queue[i])
+        end
+        -- local craft = crafts.queue[i]
+        -- love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * 40)
     end
 end
 
