@@ -10,6 +10,7 @@ local power = require "src.power"
 local hud  = require "src.gui.hud"
 local play = require "src.scenes.play"
 local fonts = require "src.fonts"
+local button = require "src.gui.button"
 
 local inventory = {}
 
@@ -136,27 +137,18 @@ function inventory.drawObjective(x, y)
     end
 end
 
-inventory.recipeRects = {} -- clickable zones, rebuilt at every draw
+inventory.recipeButtons = {} -- clickable zones, rebuilt at every draw
 
 
 
-function inventory.drawRecipes(x, y)
-    local lineHeight = 40
+function inventory.drawRecipes(x, y, w)
+    local buttonHeight = 60
+    local gap = 12
 
-    inventory.recipeRects = {} -- reset: positions are recomputed each frame
-
-    love.graphics.setFont(fonts.hud)
+    inventory.recipeButtons = {} -- reset: the label and the state change while the game runs
 
     for i = 1, #items.objects do
         local object = items.objects[i]
-        local lineY = y + (i - 1) * lineHeight
-
-        -- green if affordable, red otherwise (the specs indicator)
-        if player.hasRessources(object.cost) then
-            love.graphics.setColor(0, 1, 0)
-        else
-            love.graphics.setColor(1, 0, 0)
-        end
 
         -- building the cost text: "2 Silicium, 1 Fer"
         local costText = ""
@@ -164,30 +156,33 @@ function inventory.drawRecipes(x, y)
             local r = items.getRessourceById(ressourceId)
             costText = costText .. string.format("%d %s, ", quantity, r.display)
         end
+        costText = costText:sub(1, -3) -- drop the trailing ", "
 
-        local text = string.format("%s (%s%ds) - possédé: %d", object.display, costText, object.craftTime, player.inventory[object.id])
-        love.graphics.print(text, x, lineY)
-
-        -- remember the clickable zone of this line for mousepressed
-        local font = love.graphics.getFont()
-        table.insert(inventory.recipeRects, {
-            object = object,
-            x = x, y = lineY,
-            w = font:getWidth(text), h = font:getHeight()
+        table.insert(inventory.recipeButtons, {
+            object  = object,
+            label   = string.format("%s (%s - %ds) - possédé : %d", object.display, costText, object.craftTime, player.inventory[object.id]),
+            font    = fonts.hud,
+            x = x, y = y + (i - 1) * (buttonHeight + gap),
+            w = w, h = buttonHeight,
+            enabled = player.hasRessources(object.cost),
+            onClick = function() crafts.start(object) end
         })
     end
 
+    button.drawList(inventory.recipeButtons)
+
     -- crafts in progress, below
+    local queueY = y + #items.objects * (buttonHeight + gap) + gap * 2
+
     love.graphics.setFont(fonts.button)
     love.graphics.setColor(colors.title)
-    local queueY = y + (#items.objects + 1) * lineHeight
     love.graphics.print("En cours :", x, queueY)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
     for i = 1, #crafts.queue do
         local craft = crafts.queue[i]
-        love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * lineHeight)
+        love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * 40)
     end
 end
 
@@ -209,7 +204,7 @@ function inventory.draw()
 
     x, y, w, h = inventory.getPanelRect(2)
     inventory.drawPanel(x, y, w, h, "Fabrication")
-    inventory.drawRecipes(x + layout.padding, y + layout.titleHeight)
+    inventory.drawRecipes(x + layout.padding, y + layout.titleHeight, w - layout.padding * 2)
 end
 
 function inventory.keypressed(key)
@@ -223,25 +218,26 @@ function inventory.keypressed(key)
 end
 
 -- handle a click inside the inventory screen (left click: launch a craft, right click: pick an owned object to place it)
-function inventory.mousepressed(x, y, button)
-    for i = 1, #inventory.recipeRects do
-        local rect = inventory.recipeRects[i]
-        if utils.isPointInRect(x, y, rect.x, rect.y, rect.w, rect.h) then
+function inventory.mousepressed(x, y, pressedButton)
+    if pressedButton == 1 then
+        button.clickList(inventory.recipeButtons, x, y)
+        return
+    end
 
-            if button == 1 then
-                crafts.start(rect.object)
-
-            elseif button == 2 then
-                if player.inventory[rect.object.id] > 0 then
-                    game.selectedObject = rect.object
+    if pressedButton == 2 then
+        for i = 1, #inventory.recipeButtons do
+            local b = inventory.recipeButtons[i]
+            if utils.isPointInRect(x, y, b.x, b.y, b.w, b.h) then
+                if player.inventory[b.object.id] > 0 then
+                    game.selectedObject = b.object
                     game.changeState(game.state.inGame)
-                    log.add(string.format("Cliquez sur une case pour poser : %s", rect.object.display))
+                    log.add(string.format("Cliquez sur une case pour poser : %s", b.object.display))
                 else
-                    log.add(string.format("Aucun %s à poser : fabriquez-le d'abord (clic gauche)", rect.object.display))
+                    log.add(string.format("Aucun %s à poser : fabriquez-le d'abord (clic gauche)", b.object.display))
                 end
+                return
             end
         end
     end
 end
-
 return inventory
