@@ -54,7 +54,7 @@ function crafts.place(x, y, button)
     local playerTileX, playerTileY = map.getTilesPlayerOn()
     local onPlayerTile = (tileX == playerTileX and tileY == playerTileY)
 
-    if map.isInBounds(tileX, tileY) and map.isFreeTile(tileX, tileY) and not onPlayerTile then
+    if map.isInBounds(tileX, tileY) and map.isFreeTile(tileX, tileY) and not onPlayerTile and player.isTileVisible(tileX, tileY) then
         local tile = map.tiles[tileY][tileX]
         tile.object = game.selectedObject
         tile.containObject = true
