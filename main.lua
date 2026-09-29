@@ -13,7 +13,7 @@ local crafts = require "src.crafts"
 local scenes = {
     [game.state.menu]      = require "src.scenes.menu",
     [game.state.inGame]    = require "src.scenes.play",
-    [game.state.inventory] = require "src.scenes.play",
+    [game.state.inventory] = require "src.scenes.inventory",
     [game.state.victory]   = require "src.scenes.ending",
     [game.state.defeat]    = require "src.scenes.ending"
 }

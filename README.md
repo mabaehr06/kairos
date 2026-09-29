@@ -72,7 +72,7 @@ src/
 ├── version.lua       version du jeu, injectée depuis le tag git à la release
 ├── utils.lua         fonctions utilitaires
 ├── scenes/           les écrans : menu, partie et inventaire, écrans de fin
-├── gui/              les composants : bouton, HUD, panneau d'inventaire
+├── gui/              les composants : bouton et HUD
 └── debug/log.lua     journal d'événements à l'écran
 assets/               logo, bannière et polices
 docs/                 documentation du projet

@@ -41,9 +41,12 @@ function button.draw(b)
     love.graphics.setColor(pickColor(border, enabled, hovered))
     love.graphics.rectangle('line', b.x + 0.5, b.y + 0.5, b.w, b.h)
 
-    love.graphics.setFont(fonts.button)
+    -- a button can carry its own font, for a label too long to fit in the default one
+    local font = b.font or fonts.button
+
+    love.graphics.setFont(font)
     love.graphics.setColor(pickColor(label, enabled, hovered))
-    utils.printCentered(b.label, b.x, b.y + (b.h - fonts.button:getHeight()) / 2, b.w)
+    utils.printCentered(b.label, b.x, b.y + (b.h - font:getHeight()) / 2, b.w)
 end
 
 -- function that draw a whole list of buttons

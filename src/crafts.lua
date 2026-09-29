@@ -24,7 +24,7 @@ function crafts.start(object)
         player.inventory[r] = player.inventory[r] - q
     end
 
-    table.insert(crafts.queue, {id = object.id, display = object.display, timeLeft = object.craftTime })
+    table.insert(crafts.queue, {id = object.id, display = object.display, timeLeft = object.craftTime, craftTime = object.craftTime })
     log.add(string.format("Fabrication lancée : %s (%ds)", object.display, object.craftTime))
 end
 
@@ -54,7 +54,7 @@ function crafts.place(x, y, button)
     local playerTileX, playerTileY = map.getTilesPlayerOn()
     local onPlayerTile = (tileX == playerTileX and tileY == playerTileY)
 
-    if map.isInBounds(tileX, tileY) and map.isFreeTile(tileX, tileY) and not onPlayerTile then
+    if map.isInBounds(tileX, tileY) and map.isFreeTile(tileX, tileY) and not onPlayerTile and player.isTileVisible(tileX, tileY) then
         local tile = map.tiles[tileY][tileX]
         tile.object = game.selectedObject
         tile.containObject = true
