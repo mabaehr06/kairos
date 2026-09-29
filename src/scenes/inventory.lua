@@ -194,20 +194,14 @@ function inventory.drawRecipes(x, y, w)
     love.graphics.setColor(colors.title)
     love.graphics.print("En cours :", x, queueY)
 
-    love.graphics.setFont(fonts.hud)
-    love.graphics.setColor(colors.text)
-    for i = 1, #crafts.queue do
-        if #crafts.queue == 0 then
-            love.graphics.setFont(fonts.hud)
-            love.graphics.setColor(colors.text)
-            love.graphics.print("Aucune fabrication en cours", x, queueY + 50)
-        end
+    if #crafts.queue == 0 then
+        love.graphics.setFont(fonts.hud)
+        love.graphics.setColor(colors.text)
+        love.graphics.print("Aucune fabrication en cours", x, queueY + 50)
+    end
 
-        for i = 1, #crafts.queue do
-            inventory.drawCraft(x, queueY + i * 50, w, crafts.queue[i])
-        end
-        -- local craft = crafts.queue[i]
-        -- love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, queueY + i * 40)
+    for i = 1, #crafts.queue do
+        inventory.drawCraft(x, queueY + i * 50, w, crafts.queue[i])
     end
 end
 
