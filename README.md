@@ -91,10 +91,19 @@ Le meilleur temps est stocké dans `best.txt`, dans le répertoire de sauvegarde
 
 ## Releases
 
-Pousser un tag lance la construction des trois formats et publie la release :
+Le jeu suit un versionnage `vX.Y.Z` :
+
+| Position | Quand l'incrémenter | Exemples |
+|---|---|---|
+| **X** — majeur | Reste à `0` tant que la boucle de jeu n'est pas complète. Passera à `1` à la première version finie et jouable de bout en bout, puis à chaque refonte qui change le jeu en profondeur ou casse la compatibilité des sauvegardes. | `v1.0.0` |
+| **Y** — mineur | Un pan du jeu apparaît ou est entièrement refait : un nouvel écran, un nouveau système de jeu, la refonte complète d'une interface existante. Remet `Z` à zéro. | `v0.1.0` refonte du menu, `v0.2.0` refonte de l'inventaire |
+| **Z** — correctif | Tout ce qui ne change pas la structure : corrections de bugs, équilibrage, ajout de sprites, retouches visuelles ponctuelles. | `v0.1.1` textures des minerais, `v0.1.2` sprites de la fusée |
+
+Pousser un tag construit les trois formats et publie la release. Le tag est annoté, et son message résume la version en une ligne :
 
 ```bash
-git tag vX.X.X && git push --tags
+git tag -a v0.2.0 -m "Inventory screen redesigned, with panels, ressource sprites, craft buttons and progress bars"
+git push origin v0.2.0
 ```
 
 Le nom du tag devient la version affichée dans le menu.
