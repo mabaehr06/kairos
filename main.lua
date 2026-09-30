@@ -14,6 +14,7 @@ local radar    = require "src.radar"
 
 local scenes = {
     [game.state.menu]      = require "src.scenes.menu",
+    [game.state.settings]  = require "src.scenes.settings",
     [game.state.inGame]    = require "src.scenes.play",
     [game.state.inventory] = require "src.scenes.inventory",
     [game.state.victory]   = require "src.scenes.ending",

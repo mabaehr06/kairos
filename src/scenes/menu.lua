@@ -73,7 +73,7 @@ function menu.enter()
 
     menu.buttons = {
         { label = labels.play,     x = x, y = y,                      w = width, h = height, onClick = function() game.reset() end },
-        { label = labels.settings, x = x, y = y + (height + gap),      w = width, h = height, enabled = false },
+        { label = labels.settings, x = x, y = y + (height + gap),      w = width, h = height, onClick = function() game.changeState(game.state.settings) end },
         { label = labels.quit,     x = x, y = y + (height + gap) * 2,  w = width, h = height, onClick = function() love.event.quit() end }
     }
 

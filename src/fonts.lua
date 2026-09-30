@@ -16,10 +16,11 @@ end
 function fonts.load()
     local height = love.graphics.getHeight()
 
-    fonts.title  = newFont(file, math.floor(height * 0.085))
-    fonts.button = newFont(file, math.floor(height * 0.032))
-    fonts.hud    = newFont(file, math.floor(height * 0.022))
-    fonts.small  = newFont(file, math.floor(height * 0.018))
+    fonts.title     = newFont(file, math.floor(height * 0.085))
+    fonts.subtitle  = newFont(file, math.floor(height * 0.050))
+    fonts.button    = newFont(file, math.floor(height * 0.032))
+    fonts.hud       = newFont(file, math.floor(height * 0.022))
+    fonts.small     = newFont(file, math.floor(height * 0.018))
 end
 
 return fonts

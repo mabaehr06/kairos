@@ -2,6 +2,7 @@ local utils = require "src.utils"
 local fonts = require "src.fonts"
 
 -- a button is a simple table: { label, x, y, w, h, onClick, enabled, active }
+-- an 'image' can take the place of the label, for an option that is shown as a picture
 local button = {}
 
 -- colors taken from the logo: a thin grey outline, white under the mouse,
@@ -12,6 +13,8 @@ local border = {
     active   = {0.40, 0.64, 0.86},
     disabled = {0.19, 0.19, 0.20}
 }
+
+local imageMargin = 12 -- space kept between an image and the outline of its button, in pixels
 
 local label = {
     idle     = {0.75, 0.76, 0.79},
@@ -45,6 +48,17 @@ function button.draw(b)
     love.graphics.setLineWidth(1)
     love.graphics.setColor(pickColor(border, enabled, hovered, active))
     love.graphics.rectangle('line', b.x + 0.5, b.y + 0.5, b.w, b.h)
+
+    -- an image says nothing through the color of a label: it is dimmed instead, so the one
+    -- being pointed at or already chosen is the only one at full strength
+    if b.image ~= nil then
+        local scale = (b.h - imageMargin * 2) / b.image:getHeight()
+        local width, height = b.image:getWidth() * scale, b.image:getHeight() * scale
+
+        love.graphics.setColor(1, 1, 1, (active or hovered) and 1 or 0.55)
+        love.graphics.draw(b.image, b.x + (b.w - width) / 2, b.y + (b.h - height) / 2, 0, scale, scale)
+        return
+    end
 
     -- a button can carry its own font, for a label too long to fit in the default one
     local font = b.font or fonts.button
