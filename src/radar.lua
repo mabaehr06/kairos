@@ -1,5 +1,6 @@
 local cfg   = require "src.config"
 local items = require "src.items"
+local log   = require "src.debug.log"
 
 local radar = {}
 
@@ -10,12 +11,44 @@ radar.maximalLevel = #items.radar
 function radar.load()
     radar.level = 0
     radar.visibility = cfg.player.visibility
+    radar.upgrading = false
 end
 
 -- function that return the next level of the radar, nil if the radar is already at its maximum
 function radar.getNextLevel()
     if radar.level >= radar.maximalLevel then return nil end
     return items.radar[radar.level + 1]
+end
+
+-- function that send an upgrade of the radar to the craft queue, if there is a level left.
+function radar.upgrade()
+    local crafts = require "src.crafts"
+    local nextLevel = radar.getNextLevel()
+
+    if nextLevel == nil then
+        log.add("Le radar est déjà au niveau maximum")
+        return
+    end
+
+    if radar.upgrading then
+        log.add("Une amélioration du radar est déjà en cours")
+        return
+    end
+
+    radar.upgrading = crafts.start({
+        display    = string.format("Radar niv. %d", radar.level + 1),
+        craftTime  = nextLevel.craftTime,
+        cost       = nextLevel.cost,
+        onComplete = radar.applyUpgrade
+    })
+end
+
+-- function called by the craft queue once the upgrade is built: the radar takes its level and its vision
+function radar.applyUpgrade()
+    radar.level = radar.level + 1
+    radar.visibility = items.radar[radar.level].visibility
+    radar.upgrading = false
+    log.add(string.format("Radar niveau %d : vision de %d cases", radar.level, radar.visibility))
 end
 
 return radar

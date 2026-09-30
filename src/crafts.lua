@@ -45,12 +45,14 @@ function crafts.update(dt)
         craft.timeLeft = craft.timeLeft - dt
 
         if craft.timeLeft <= 0 then
+            log.add(string.format("Fabrication terminée : %s", craft.display))
+
+            -- the callback runs after the message above, so its own message reads next and not first
             if craft.onComplete ~= nil then
                 craft.onComplete()
             else
                 player.inventory[craft.id] = player.inventory[craft.id] + 1
             end
-            log.add(string.format("Fabrication terminée : %s", craft.display))
             table.remove(crafts.queue, i)
         end
     end
