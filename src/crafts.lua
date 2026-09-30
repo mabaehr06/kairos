@@ -13,19 +13,29 @@ function crafts.load()
 end
 
 
-function crafts.start(object)
-    if not player.hasRessources(object.cost) then
-        log.add(string.format("Ressources insuffisantes (%s)", object.display))
-        return
+-- a craft is any table holding a display, a craftTime and a cost, plus either an 'id' to drop in the
+-- inventory once it is done, or an 'onComplete' callback for a craft that does something else.
+-- it returns true if the craft went into the queue, false if the player could not pay for it
+function crafts.start(craft)
+    if not player.hasRessources(craft.cost) then
+        log.add(string.format("Ressources insuffisantes (%s)", craft.display))
+        return false
     end
 
     -- removing the cost to the player inventory before the craft
-    for r, q in pairs(object.cost) do
+    for r, q in pairs(craft.cost) do
         player.inventory[r] = player.inventory[r] - q
     end
 
-    table.insert(crafts.queue, {id = object.id, display = object.display, timeLeft = object.craftTime, craftTime = object.craftTime })
-    log.add(string.format("Fabrication lancée : %s (%ds)", object.display, object.craftTime))
+    table.insert(crafts.queue, {
+        id         = craft.id,
+        display    = craft.display,
+        timeLeft   = craft.craftTime,
+        craftTime  = craft.craftTime,
+        onComplete = craft.onComplete
+    })
+    log.add(string.format("Fabrication lancée : %s (%ds)", craft.display, craft.craftTime))
+    return true
 end
 
 function crafts.update(dt)
@@ -35,7 +45,11 @@ function crafts.update(dt)
         craft.timeLeft = craft.timeLeft - dt
 
         if craft.timeLeft <= 0 then
-            player.inventory[craft.id] = player.inventory[craft.id] + 1
+            if craft.onComplete ~= nil then
+                craft.onComplete()
+            else
+                player.inventory[craft.id] = player.inventory[craft.id] + 1
+            end
             log.add(string.format("Fabrication terminée : %s", craft.display))
             table.remove(crafts.queue, i)
         end
