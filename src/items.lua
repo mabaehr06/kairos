@@ -54,6 +54,15 @@ items.radar =
     { visibility = 20, cost = { titane = 5, silicium = 4 }, craftTime = 25 }
 }
 
+-- items.radar =
+-- {
+--     { visibility = 7,  cost = { regolithe = 1 }, craftTime = 5  },
+--     { visibility = 10, cost = { regolithe = 1 }, craftTime = 10 },
+--     { visibility = 13, cost = { regolithe = 1 }, craftTime = 15 },
+--     { visibility = 16, cost = { regolithe = 1 }, craftTime = 20 },
+--     { visibility = 20, cost = { regolithe = 1 }, craftTime = 25 }
+-- }
+
 -- function that load the sprite of every ressource, from 'assets/ressources'
 function items.loadImages()
     for i = 1, #items.ressources do
