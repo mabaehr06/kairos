@@ -192,7 +192,7 @@ function inventory.drawObjects(x, y, w)
 
         table.insert(inventory.recipeButtons, {
             object  = object,
-            label   = string.format("%s (%s - %ds) - possédé : %d", object.display, costText(object.cost), object.craftTime, player.inventory[object.id]),
+            label   = string.format("%s (%s - %ds)", object.display, costText(object.cost), object.craftTime),
             font    = fonts.hud,
             x = x, y = y + (i - 1) * (layout.buttonHeight + layout.buttonGap),
             w = w, h = layout.buttonHeight,
@@ -215,8 +215,8 @@ function inventory.drawUpgrades(x, y, w)
     if nextLevel == nil then
         label = string.format("Radar niv. %d : %d cases (maximum)", radar.level, radar.visibility)
     else
-        label = string.format("Radar niv. %d → %d : %d → %d cases (%s - %ds)",
-            radar.level, radar.level + 1, radar.visibility, nextLevel.visibility,
+        label = string.format("Radar : %d → %d cases (%s - %ds)",
+            radar.visibility, nextLevel.visibility,
             costText(nextLevel.cost), nextLevel.craftTime)
     end
 
