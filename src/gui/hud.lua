@@ -4,6 +4,7 @@ local items = require "src.items"
 local cfg = require "src.config"
 local cycle = require "src.cycle"
 local power = require "src.power"
+local radar = require "src.radar"
 
 local hud = {}
 
@@ -58,10 +59,16 @@ function hud.drawPower()
     love.graphics.print(string.format("Électricité: %d/%d", pActual, pMax), 50, love.graphics.getHeight() - 100)
 end
 
+function hud.drawRadar()
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print(string.format("Radar: niv. %d (%d cases)", radar.level, radar.visibility), 50, love.graphics.getHeight() - 150)
+end
+
 function hud.draw()
     hud.drawOxygen() -- Oxygen interface
     hud.drawTime() -- Time interface
     hud.drawPower() -- Power
+    hud.drawRadar() -- Radar
 end
 
 return hud
