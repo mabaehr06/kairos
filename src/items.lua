@@ -18,7 +18,7 @@ items.specials =
 
 items.objects =
 {
-    { id = 'panel',         display = "Panneau solaire", cost = { silicium = 2, fer = 1 }, craftTime = 5,  color = { 30,  60, 120} },
+    { id = 'panel',         display = "Panneau solaire", cost = { fer = 1, silicium = 2 }, craftTime = 5,  color = { 30,  60, 120} },
     { id = 'battery',       display = "Batterie",        cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
     { id = 'electrolyseur', display = "Électrolyseur",   cost = { fer = 2, titane = 1 },   craftTime = 10, color = {200, 120,  40} },
 
@@ -43,6 +43,25 @@ items.rocket =
     -- { id = 'moteurs',      display = "Moteurs",      cost = { regolithe = 0 } },
     -- { id = 'carburant',    display = "Carburant",    cost = { regolithe = 0 } },
 }
+
+-- the radar is not a placed object: it is an upgrade of the field of view of the player, one entry per level.
+items.radar =
+{
+    { visibility = 7,  cost = { titane = 1, silicium = 1 }, craftTime = 5  },
+    { visibility = 9, cost = { titane = 2, silicium = 1 }, craftTime = 10 },
+    { visibility = 11, cost = { titane = 3, silicium = 2 }, craftTime = 15 },
+    { visibility = 13, cost = { titane = 4, silicium = 3 }, craftTime = 20 },
+    { visibility = 15, cost = { titane = 5, silicium = 4 }, craftTime = 25 }
+}
+
+-- items.radar =
+-- {
+--     { visibility = 7,  cost = { regolithe = 1 }, craftTime = 5  },
+--     { visibility = 10, cost = { regolithe = 1 }, craftTime = 10 },
+--     { visibility = 13, cost = { regolithe = 1 }, craftTime = 15 },
+--     { visibility = 16, cost = { regolithe = 1 }, craftTime = 20 },
+--     { visibility = 20, cost = { regolithe = 1 }, craftTime = 25 }
+-- }
 
 -- function that load the sprite of every ressource, from 'assets/ressources'
 function items.loadImages()

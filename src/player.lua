@@ -6,6 +6,7 @@ local rocket = require "src.rocket"
 local game = require "src.game"
 local power = require "src.power"
 local utils = require "src.utils"
+local radar = require "src.radar"
 
 player = {}
 
@@ -45,7 +46,7 @@ end
 function player.isTileVisible(tileX, tileY)
     local px, py = map.getTilesPlayerOn()
     local dx, dy = tileX - px, tileY - py
-    local radius = cfg.player.visibility
+    local radius = radar.visibility
     return dx * dx + dy * dy <= radius * radius
 end
 

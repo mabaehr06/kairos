@@ -9,6 +9,7 @@ local camera = require "src.camera"
 local cycle  = require "src.cycle"
 local power  = require "src.power"
 local crafts = require "src.crafts"
+local radar  = require "src.radar"
 
 local scenes = {
     [game.state.menu]      = require "src.scenes.menu",
@@ -49,6 +50,7 @@ function love.load()
     cycle.load()
     power.load()
     crafts.load()
+    radar.load()
 end
 
 -- from here, every callback only give the hand to the scene of the current state

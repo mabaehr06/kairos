@@ -57,14 +57,15 @@ Le projet sépare les **écrans** des **composants**. Un écran vit dans `src/sc
 main.lua              point d'entrée LÖVE, transmet tout à la scène de l'état courant
 conf.lua              fenêtre et identité du jeu
 src/
-├── config.lua        toutes les constantes de gameplay
-├── items.lua         ressources, objets et recettes
+├── config.lua        réglages des systèmes de jeu
+├── items.lua         ressources, objets, recettes et niveaux du radar
 ├── game.lua          machine à états, chronomètre, victoire / défaite
 ├── map.lua           génération de la carte et des ressources
 ├── player.lua        déplacement, inventaire, oxygène, interactions
 ├── rocket.lua        étapes de réparation et décollage
 ├── crafts.lua        file de fabrication et pose d'objets
 ├── power.lua         production et consommation d'électricité
+├── radar.lua         niveau du radar et champ de vision du joueur
 ├── cycle.lua         cycle jour / nuit
 ├── camera.lua        suivi du joueur, conversion écran ↔ monde
 ├── save.lua          persistance du meilleur temps
@@ -80,7 +81,7 @@ docs/                 documentation du projet
 
 ## Configuration
 
-`src/config.lua` regroupe l'intégralité des valeurs de gameplay : vitesse du joueur, réserve d'oxygène, taille de la carte, densité des ressources, durée du cycle, rendement des panneaux. Aucune de ces valeurs n'est codée en dur ailleurs, c'est donc le seul fichier à toucher pour équilibrer le jeu.
+`src/config.lua` regroupe les réglages des systèmes : vitesse du joueur, réserve d'oxygène, taille de la carte, durée du cycle, rendement des panneaux, champ de vision de départ. `src/items.lua` tient la définition de tout ce que le jeu contient et son coût : densité des ressources, recettes des objets, étapes de réparation de la fusée et niveaux du radar. Aucune de ces valeurs n'est codée en dur ailleurs, ces deux fichiers sont les seuls à toucher pour équilibrer le jeu.
 le jeu peut gérer n'importe quelle résolution.
 Le plein écran et l'écran utilisé se règlent dans la section `graphics` de `src/config.lua`.
 
