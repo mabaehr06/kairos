@@ -1,5 +1,6 @@
 local game    = require "src.game"
 local store   = require "src.settings"
+local lang    = require "src.lang"
 local setting = require "src.gui.setting"
 local button  = require "src.gui.button"
 local fonts   = require "src.fonts"
@@ -12,8 +13,8 @@ local settings = {}
 local flagPath = "assets/languages/%s.png"
 local flags = nil -- the images, loaded once the first time we enter the screen
 
--- the languages the screen offers, in the order they are shown
-local languages = { "en", "es", "fr", "it" }
+-- the languages the screen offers: 'src.lang' is the one deciding which exist
+local languages = lang.codes
 
 -- every text of the screen is gathered here, to prepare the translation of the game
 local labels = {
