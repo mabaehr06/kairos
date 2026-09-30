@@ -34,6 +34,7 @@ function game.reset()
     local player = require "src.player"
     local power = require "src.power"
     local crafts = require "src.crafts"
+    local radar = require "src.radar"
 
     game.totalTime = 0
     game.selectedObject = nil
@@ -42,6 +43,7 @@ function game.reset()
     player.load()
     power.load()
     crafts.load()
+    radar.load()
 
     game.changeState(game.state.inGame)
     log.clear()

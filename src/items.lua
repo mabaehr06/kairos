@@ -44,6 +44,16 @@ items.rocket =
     -- { id = 'carburant',    display = "Carburant",    cost = { regolithe = 0 } },
 }
 
+-- the radar is not a placed object: it is an upgrade of the field of view of the player, one entry per level.
+items.radar =
+{
+    { visibility = 7,  cost = { titane = 1, silicium = 1 }, craftTime = 5  },
+    { visibility = 10, cost = { titane = 2, silicium = 1 }, craftTime = 10 },
+    { visibility = 13, cost = { titane = 3, silicium = 2 }, craftTime = 15 },
+    { visibility = 16, cost = { titane = 4, silicium = 3 }, craftTime = 20 },
+    { visibility = 20, cost = { titane = 5, silicium = 4 }, craftTime = 25 }
+}
+
 -- function that load the sprite of every ressource, from 'assets/ressources'
 function items.loadImages()
     for i = 1, #items.ressources do
