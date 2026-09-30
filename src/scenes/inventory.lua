@@ -11,6 +11,7 @@ local hud  = require "src.gui.hud"
 local play = require "src.scenes.play"
 local fonts = require "src.fonts"
 local button = require "src.gui.button"
+local radar = require "src.radar"
 
 local inventory = {}
 
@@ -26,14 +27,35 @@ local colors = {
 
 -- the two panels are placed in fraction of the window, so they follow any resolution
 local layout = {
-    marginX      = 0.06,
-    marginY      = 0.08,
-    marginBottom = 0.12,
-    panelGap     = 0.04,
-    panelWidth   = 0.42,
-    padding      = 40, -- inner padding of a panel, in pixels
-    titleHeight  = 60  -- room taken by the title of a panel, in pixels
+    marginX       = 0.06,
+    marginY       = 0.08,
+    marginBottom  = 0.12,
+    panelGap      = 0.04,
+    panelWidth    = 0.42,
+    padding       = 40, -- inner padding of a panel, in pixels
+    titleHeight   = 60, -- room taken by the title of a panel, in pixels
+    headingHeight = 50, -- room taken by a heading inside a panel, in pixels
+    buttonHeight  = 60, -- one craft button, in pixels
+    buttonGap     = 12
 }
+
+-- function that turn a cost table into a readable line: "2 Silicium, 1 Fer"
+local function costText(cost)
+    local text = ""
+    for ressourceId, quantity in pairs(cost) do
+        local r = items.getRessourceById(ressourceId)
+        text = text .. string.format("%d %s, ", quantity, r.display)
+    end
+    return text:sub(1, -3) -- drop the trailing ", "
+end
+
+-- function that draw a heading inside a panel, and return the y where its content starts
+local function drawHeading(text, x, y)
+    love.graphics.setFont(fonts.button)
+    love.graphics.setColor(colors.title)
+    love.graphics.print(text, x, y)
+    return y + layout.headingHeight
+end
 
 -- function that return the rectangle of one of the two panels
 function inventory.getPanelRect(index)
@@ -106,6 +128,9 @@ function inventory.drawRessources(x, y)
     love.graphics.setColor(colors.text)
     love.graphics.print(string.format("Électricité : %d/%d", power.current, power.getCapacity()), x, yActual)
 
+    yActual = yActual + lineHeight
+    love.graphics.print(string.format("Radar : niv. %d (%d cases)", radar.level, radar.visibility), x, yActual)
+
     return yActual + lineHeight * 2
 end
 
@@ -139,7 +164,8 @@ function inventory.drawObjective(x, y)
     end
 end
 
-inventory.recipeButtons = {} -- clickable zones, rebuilt at every draw
+inventory.recipeButtons = {}  -- clickable zones, rebuilt at every draw
+inventory.upgradeButtons = {}
 
 -- function that draw one craft of the queue: its name, its remaining time, and how far it went
 function inventory.drawCraft(x, y, w, craft)
@@ -157,52 +183,78 @@ function inventory.drawCraft(x, y, w, craft)
     love.graphics.rectangle('fill', x, y + 30, w * ratio, barHeight)
 end
 
-function inventory.drawRecipes(x, y, w)
-    local buttonHeight = 60
-    local gap = 12
-
+-- function that draw the objects to place, as one button each
+function inventory.drawObjects(x, y, w)
     inventory.recipeButtons = {} -- reset: the label and the state change while the game runs
 
     for i = 1, #items.objects do
         local object = items.objects[i]
 
-        -- building the cost text: "2 Silicium, 1 Fer"
-        local costText = ""
-        for ressourceId, quantity in pairs(object.cost) do
-            local r = items.getRessourceById(ressourceId)
-            costText = costText .. string.format("%d %s, ", quantity, r.display)
-        end
-        costText = costText:sub(1, -3) -- drop the trailing ", "
-
         table.insert(inventory.recipeButtons, {
             object  = object,
-            label   = string.format("%s (%s - %ds) - possédé : %d", object.display, costText, object.craftTime, player.inventory[object.id]),
+            label   = string.format("%s (%s - %ds) - possédé : %d", object.display, costText(object.cost), object.craftTime, player.inventory[object.id]),
             font    = fonts.hud,
-            x = x, y = y + (i - 1) * (buttonHeight + gap),
-            w = w, h = buttonHeight,
+            x = x, y = y + (i - 1) * (layout.buttonHeight + layout.buttonGap),
+            w = w, h = layout.buttonHeight,
             enabled = player.hasRessources(object.cost),
             onClick = function() crafts.start(object) end
         })
     end
 
     button.drawList(inventory.recipeButtons)
+    return y + #items.objects * (layout.buttonHeight + layout.buttonGap)
+end
 
-    -- crafts in progress, below
-    local queueY = y + #items.objects * (buttonHeight + gap) + gap * 2
+-- function that draw the radar, the only craft that is not an object to place.
+-- its button is held apart from inventory.recipeButtons: a right click there looks for an object
+-- to place on the map, and the radar has none
+function inventory.drawUpgrades(x, y, w)
+    local nextLevel = radar.getNextLevel()
+    local label
 
-    love.graphics.setFont(fonts.button)
-    love.graphics.setColor(colors.title)
-    love.graphics.print("En cours :", x, queueY)
+    if nextLevel == nil then
+        label = string.format("Radar niv. %d : %d cases (maximum)", radar.level, radar.visibility)
+    else
+        label = string.format("Radar niv. %d → %d : %d → %d cases (%s - %ds)",
+            radar.level, radar.level + 1, radar.visibility, nextLevel.visibility,
+            costText(nextLevel.cost), nextLevel.craftTime)
+    end
 
+    inventory.upgradeButtons = {{
+        label   = label,
+        font    = fonts.hud,
+        x = x, y = y, w = w, h = layout.buttonHeight,
+        enabled = nextLevel ~= nil and not radar.upgrading and player.hasRessources(nextLevel.cost),
+        onClick = radar.upgrade
+    }}
+
+    button.drawList(inventory.upgradeButtons)
+    return y + layout.buttonHeight + layout.buttonGap
+end
+
+-- function that draw the crafts being built. it stays at the bottom of the panel: the list grow downward
+function inventory.drawQueue(x, y, w)
     if #crafts.queue == 0 then
         love.graphics.setFont(fonts.hud)
         love.graphics.setColor(colors.text)
-        love.graphics.print("Aucune fabrication en cours", x, queueY + 50)
+        love.graphics.print("Aucune fabrication en cours", x, y)
+        return
     end
 
     for i = 1, #crafts.queue do
-        inventory.drawCraft(x, queueY + i * 50, w, crafts.queue[i])
+        inventory.drawCraft(x, y + (i - 1) * 50, w, crafts.queue[i])
     end
+end
+
+function inventory.drawRecipes(x, y, w)
+    local yActual = drawHeading("Objets", x, y)
+    yActual = inventory.drawObjects(x, yActual, w)
+
+    yActual = drawHeading("Amélioration", x, yActual + layout.buttonGap)
+    yActual = inventory.drawUpgrades(x, yActual, w)
+
+    yActual = drawHeading("En cours :", x, yActual + layout.buttonGap)
+    inventory.drawQueue(x, yActual, w)
 end
 
 -- the game keep running while the inventory is opened, the oxygen does not wait for the player
@@ -239,7 +291,8 @@ end
 -- handle a click inside the inventory screen (left click: launch a craft, right click: pick an owned object to place it)
 function inventory.mousepressed(x, y, pressedButton)
     if pressedButton == 1 then
-        button.clickList(inventory.recipeButtons, x, y)
+        if button.clickList(inventory.recipeButtons, x, y) then return end
+        button.clickList(inventory.upgradeButtons, x, y)
         return
     end
 
