@@ -7,6 +7,7 @@ local game = {}
 
 game.state = {
     menu = "menu",
+    settings = "settings",
     inGame = "inGame",
     pause = "pause",
     defeat = "defeat",

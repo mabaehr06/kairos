@@ -18,6 +18,9 @@ return {
         useOxygen = 'v',
         reset = 'r'
     },
+    settings = { -- what the player can change from the settings screen, and the value it starts at.
+        language = 'fr'
+    },
     player = {
         scale = 0.7,
         speed = 400,

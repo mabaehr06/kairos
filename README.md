@@ -69,13 +69,14 @@ src/
 ├── cycle.lua         cycle jour / nuit
 ├── camera.lua        suivi du joueur, conversion écran ↔ monde
 ├── save.lua          persistance du meilleur temps
+├── settings.lua      réglages du joueur, et leur persistance
 ├── fonts.lua         polices du jeu, en tailles relatives à la fenêtre
 ├── version.lua       version du jeu, injectée depuis le tag git à la release
 ├── utils.lua         fonctions utilitaires
-├── scenes/           les écrans : menu, partie et inventaire, écrans de fin
-├── gui/              les composants : bouton et HUD
+├── scenes/           les écrans : menu, paramètres, partie et inventaire, écrans de fin
+├── gui/              les composants : bouton, rangée de réglage et HUD
 └── debug/log.lua     journal d'événements à l'écran
-assets/               logo, bannière et polices
+assets/               logo, bannière, polices et drapeaux des langues
 docs/                 documentation du projet
 ```
 
@@ -85,7 +86,9 @@ docs/                 documentation du projet
 le jeu peut gérer n'importe quelle résolution.
 Le plein écran et l'écran utilisé se règlent dans la section `graphics` de `src/config.lua`.
 
-Le meilleur temps est stocké dans `best.txt`, dans le répertoire de sauvegarde LÖVE :
+La section `settings` de `src/config.lua` est à part : elle liste ce que le joueur peut changer depuis l'écran de paramètres, et la valeur de départ de chaque réglage. Une clé absente de cette section est une clé que le jeu ignore, en lecture comme en écriture.
+
+Le meilleur temps est stocké dans `best.txt` et les réglages dans `settings.txt`, dans le répertoire de sauvegarde LÖVE :
 
 - Linux — `~/.local/share/love/kairos/`
 - Windows — `%APPDATA%\LOVE\kairos\`

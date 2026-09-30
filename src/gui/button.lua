@@ -1,26 +1,33 @@
 local utils = require "src.utils"
 local fonts = require "src.fonts"
 
--- a button is a simple table: { label, x, y, w, h, onClick, enabled }
+-- a button is a simple table: { label, x, y, w, h, onClick, enabled, active }
+-- an 'image' can take the place of the label, for an option that is shown as a picture
 local button = {}
 
--- colors taken from the logo: a thin grey outline, and the blue of the earth when the mouse is over
+-- colors taken from the logo: a thin grey outline, white under the mouse,
+-- and the blue of the earth for a button holding the value currently selected
 local border = {
     idle     = {0.30, 0.30, 0.31},
-    -- hover    = {0.40, 0.64, 0.86},
     hover    = {0.86, 0.86, 0.86},
+    active   = {0.40, 0.64, 0.86},
     disabled = {0.19, 0.19, 0.20}
 }
+
+local imageMargin = 12 -- space kept between an image and the outline of its button, in pixels
 
 local label = {
     idle     = {0.75, 0.76, 0.79},
     hover    = {1, 1, 1},
+    active   = {0.40, 0.64, 0.86},
     disabled = {0.34, 0.34, 0.36}
 }
 
--- function that pick, in a set of three colors, the one matching the state of the button
-local function pickColor(set, enabled, hovered)
+-- function that pick, in a set of colors, the one matching the state of the button.
+-- 'active' comes before 'hover': a selected option must keep reading as selected under the mouse
+local function pickColor(set, enabled, hovered, active)
     if not enabled  then return set.disabled    end
+    if active       then return set.active      end
     if hovered      then return set.hover       end
     return set.idle
 end
@@ -35,17 +42,29 @@ end
 function button.draw(b)
     local enabled = b.enabled ~= false
     local hovered = enabled and button.isHovered(b)
+    local active  = b.active == true
 
     -- the half pixel keep the one pixel outline sharp instead of two pixels looking ugly
     love.graphics.setLineWidth(1)
-    love.graphics.setColor(pickColor(border, enabled, hovered))
+    love.graphics.setColor(pickColor(border, enabled, hovered, active))
     love.graphics.rectangle('line', b.x + 0.5, b.y + 0.5, b.w, b.h)
+
+    -- an image says nothing through the color of a label: it is dimmed instead, so the one
+    -- being pointed at or already chosen is the only one at full strength
+    if b.image ~= nil then
+        local scale = (b.h - imageMargin * 2) / b.image:getHeight()
+        local width, height = b.image:getWidth() * scale, b.image:getHeight() * scale
+
+        love.graphics.setColor(1, 1, 1, (active or hovered) and 1 or 0.55)
+        love.graphics.draw(b.image, b.x + (b.w - width) / 2, b.y + (b.h - height) / 2, 0, scale, scale)
+        return
+    end
 
     -- a button can carry its own font, for a label too long to fit in the default one
     local font = b.font or fonts.button
 
     love.graphics.setFont(font)
-    love.graphics.setColor(pickColor(label, enabled, hovered))
+    love.graphics.setColor(pickColor(label, enabled, hovered, active))
     utils.printCentered(b.label, b.x, b.y + (b.h - font:getHeight()) / 2, b.w)
 end
 
