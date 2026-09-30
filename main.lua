@@ -1,15 +1,16 @@
-local cfg    = require "src.config"
-local game   = require "src.game"
-local fonts  = require "src.fonts"
-local items  = require "src.items"
-local map    = require "src.map"
-local rocket = require "src.rocket"
-local player = require "src.player"
-local camera = require "src.camera"
-local cycle  = require "src.cycle"
-local power  = require "src.power"
-local crafts = require "src.crafts"
-local radar  = require "src.radar"
+local cfg      = require "src.config"
+local game     = require "src.game"
+local settings = require "src.settings"
+local fonts    = require "src.fonts"
+local items    = require "src.items"
+local map      = require "src.map"
+local rocket   = require "src.rocket"
+local player   = require "src.player"
+local camera   = require "src.camera"
+local cycle    = require "src.cycle"
+local power    = require "src.power"
+local crafts   = require "src.crafts"
+local radar    = require "src.radar"
 
 local scenes = {
     [game.state.menu]      = require "src.scenes.menu",
@@ -33,7 +34,9 @@ end
 
 -- function that load everything the program need at the launch of the program
 function love.load()
-    love.window.setFullscreen(cfg.graphics.fullscreen) -- handle fullscreen at the launch of the program
+    settings.load()
+
+    love.window.setFullscreen(cfg.graphics.fullscreen)
 
     game.load()
     math.randomseed(os.time())
