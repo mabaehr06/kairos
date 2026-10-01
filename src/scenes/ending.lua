@@ -3,19 +3,11 @@ local save   = require "src.save"
 local utils  = require "src.utils"
 local fonts  = require "src.fonts"
 local button = require "src.gui.button"
+local lang = require "src.lang"
 
 local ending = {}
 
 -- this scene hold the two ends of a game: the victory and the defeat
-local labels = {
-    victory   = "Victoire !",
-    defeat    = "Défaite...",
-    time      = "Votre temps : %s",
-    record    = "Votre record : %s",
-    newRecord = "Nouveau record !",
-    replay    = "Rejouer",
-    menu      = "Menu"
-}
 
 local colors = {
     background = {24 / 255, 24 / 255, 24 / 255},
@@ -46,25 +38,25 @@ function ending.enter()
     local y      = utils.round(screenHeight * layout.buttonsY)
 
     ending.buttons = {
-        { label = labels.replay, x = x, y = y,                  w = width, h = height, onClick = function() game.reset() end },
-        { label = labels.menu,   x = x, y = y + height + gap,    w = width, h = height, onClick = function() game.changeState(game.state.menu) end }
+        { label = lang.t("ending.replay"), x = x, y = y,                  w = width, h = height, onClick = function() game.reset() end },
+        { label = lang.t("ending.menu"),   x = x, y = y + height + gap,    w = width, h = height, onClick = function() game.changeState(game.state.menu) end }
     }
 end
 
 -- function that draw the time of the run, and the record of the player below it
 function ending.drawVictory(screenWidth, y, lineHeight)
     love.graphics.setColor(colors.text)
-    utils.printCentered(string.format(labels.time, utils.formatTime(game.totalTime)), 0, y, screenWidth)
+    utils.printCentered(lang.t("ending.time", utils.formatTime(game.totalTime)), 0, y, screenWidth)
 
     if game.isNewRecord then
         love.graphics.setColor(colors.record)
-        utils.printCentered(labels.newRecord, 0, y + lineHeight, screenWidth)
+        utils.printCentered(lang.t("ending.newRecord"), 0, y + lineHeight, screenWidth)
         return
     end
 
     local best = save.getBest()
     if best ~= nil then
-        utils.printCentered(string.format(labels.record, utils.formatTime(best)), 0, y + lineHeight, screenWidth)
+        utils.printCentered(lang.t("ending.record", utils.formatTime(best)), 0, y + lineHeight, screenWidth)
     end
 end
 
@@ -72,7 +64,7 @@ end
 function ending.drawDefeat(screenWidth, y, lineHeight)
     love.graphics.setColor(colors.text)
     utils.printCentered(game.deathReason or "", 0, y, screenWidth)
-    utils.printCentered(string.format(labels.time, utils.formatTime(game.totalTime)), 0, y + lineHeight, screenWidth)
+    utils.printCentered(lang.t("ending.time", utils.formatTime(game.totalTime)), 0, y + lineHeight, screenWidth)
 end
 
 function ending.draw()
@@ -84,7 +76,7 @@ function ending.draw()
 
     love.graphics.setFont(fonts.title)
     love.graphics.setColor(isVictory and colors.victory or colors.defeat)
-    utils.printCentered(isVictory and labels.victory or labels.defeat, 0, screenHeight * layout.titleY, screenWidth)
+    utils.printCentered(isVictory and lang.t("ending.victory") or lang.t("ending.defeat"), 0, screenHeight * layout.titleY, screenWidth)
 
     love.graphics.setFont(fonts.button)
     local y = screenHeight * layout.textY

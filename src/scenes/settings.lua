@@ -16,13 +16,6 @@ local flags = nil -- the images, loaded once the first time we enter the screen
 -- the languages the screen offers: 'src.lang' is the one deciding which exist
 local languages = lang.codes
 
--- every text of the screen is gathered here, to prepare the translation of the game
-local labels = {
-    title    = "Paramètres",
-    language = "Langue",
-    back     = "Retour"
-}
-
 local colors = {
     background = {24 / 255, 24 / 255, 24 / 255},
     title      = {1, 1, 1}
@@ -62,7 +55,7 @@ local function buildSettings()
 
     return {
         {
-            label   = labels.language,
+            label   = lang.t("settings.language"),
             options = options,
             get     = function() return store.language end,
             set     = function(value) store.set("language", value) end
@@ -70,24 +63,24 @@ local function buildSettings()
     }
 end
 
--- function called every time we enter the screen, it loads the flags and places the back button
-function settings.enter()
-    local screenWidth, screenHeight = love.graphics.getDimensions()
-
-    loadFlags()
-
-    -- the margin is taken on the height for both axes, so the corner looks square
-    local margin = utils.round(screenHeight * layout.margin)
+-- function that build the back button. it is rebuilt at every draw, like the options are:
+-- its label has to follow the language the moment the player change it, without leaving the screen
+local function buildBackButton(screenWidth, screenHeight, margin)
     local width  = utils.round(screenWidth * layout.backWidth)
     local height = utils.round(screenHeight * layout.backHeight)
 
-    settings.backButton = {
-        label   = labels.back,
+    return {
+        label   = lang.t("settings.back"),
         x = screenWidth - margin - width,
         y = screenHeight - margin - height,
         w = width, h = height,
         onClick = function() game.changeState(game.state.menu) end
     }
+end
+
+-- function called every time we enter the screen
+function settings.enter()
+    loadFlags()
 end
 
 function settings.draw()
@@ -100,7 +93,7 @@ function settings.draw()
 
     love.graphics.setFont(fonts.subtitle)
     love.graphics.setColor(colors.title)
-    love.graphics.print(labels.title, margin, margin)
+    love.graphics.print(lang.t("settings.title"), margin, margin)
 
     local width = screenWidth * layout.rowWidth
 
@@ -111,6 +104,7 @@ function settings.draw()
         screenHeight * layout.rowHeight,
         screenHeight * layout.rowGap)
 
+    settings.backButton = buildBackButton(screenWidth, screenHeight, margin)
     button.draw(settings.backButton)
 end
 
