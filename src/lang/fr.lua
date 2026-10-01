@@ -78,7 +78,7 @@ return {
     ["log.craft.missing"]   = "Ressources insuffisantes (%s)",
     ["log.craft.placed"]    = "Posé : %s",
     ["log.craft.cantPlace"] = "Impossible de poser ici",
-    ["log.harvest"]         = "%s trouvé (total : %d)",
+    ["log.harvest"]         = "Trouvé : %s (total : %d)",
     ["log.harvest.nothing"] = "Il n'y a rien autour de toi.",
     ["log.oxygen"]          = "Oxygène : %d/%d",
     ["log.oxygen.cant"]     = "Vous ne pouvez pas consommer ceci actuellement.",
