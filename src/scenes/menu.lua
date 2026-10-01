@@ -4,20 +4,14 @@ local utils   = require "src.utils"
 local fonts   = require "src.fonts"
 local button  = require "src.gui.button"
 local version = require "src.version"
+local lang = require "src.lang"
 
 local menu = {}
 
 local bannerPath = "assets/banner_1680_640.png"
 
--- every text of the screen is gathered here, to prepare the translation of the game
-local labels = {
-    title  = "skdjqskd",
-    play   = "Jouer",
-    settings = "Paramètres",
-    quit   = "Quitter",
-    best   = "Meilleur temps : %s",
-    noBest = "Aucun record pour l'instant"
-}
+-- the name of the game, shown when the banner is missing. it is not translated: it is a name
+local gameName = "Kairos"
 
 -- colors picked in the logo: the dark sky, the white horizon and the blue of the earth
 local colors = {
@@ -72,9 +66,9 @@ function menu.enter()
     local y      = utils.round(screenHeight * layout.buttonsY)
 
     menu.buttons = {
-        { label = labels.play,     x = x, y = y,                      w = width, h = height, onClick = function() game.reset() end },
-        { label = labels.settings, x = x, y = y + (height + gap),      w = width, h = height, onClick = function() game.changeState(game.state.settings) end },
-        { label = labels.quit,     x = x, y = y + (height + gap) * 2,  w = width, h = height, onClick = function() love.event.quit() end }
+        { label = lang.t("menu.play"),     x = x, y = y,                      w = width, h = height, onClick = function() game.reset() end },
+        { label = lang.t("menu.settings"), x = x, y = y + (height + gap),      w = width, h = height, onClick = function() game.changeState(game.state.settings) end },
+        { label = lang.t("menu.quit"),     x = x, y = y + (height + gap) * 2,  w = width, h = height, onClick = function() love.event.quit() end }
     }
 
     menu.buildGround(screenWidth, screenHeight)
@@ -103,7 +97,7 @@ function menu.drawBanner(screenWidth, screenHeight)
 
     if banner == nil then
         love.graphics.setFont(fonts.title)
-        utils.printCentered(labels.title, 0, screenHeight * 0.15, screenWidth)
+        utils.printCentered(gameName, 0, screenHeight * 0.15, screenWidth)
         return
     end
 
@@ -116,9 +110,9 @@ end
 -- function that draw the best time of the player, above the horizon
 function menu.drawBest(screenWidth, screenHeight)
     local best = save.getBest()
-    local text = labels.noBest
+    local text = lang.t("menu.noBest")
     if best ~= nil then
-        text = string.format(labels.best, utils.formatTime(best))
+        text = lang.t("menu.best", utils.formatTime(best))
     end
 
     love.graphics.setFont(fonts.small)

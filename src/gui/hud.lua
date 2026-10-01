@@ -5,6 +5,7 @@ local cfg = require "src.config"
 local cycle = require "src.cycle"
 local power = require "src.power"
 local radar = require "src.radar"
+local lang = require "src.lang"
 
 local hud = {}
 
@@ -56,12 +57,12 @@ function hud.drawPower()
     local pMax = power.getCapacity()
 
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(string.format("Électricité: %d/%d", pActual, pMax), 50, love.graphics.getHeight() - 100)
+    love.graphics.print(lang.t("hud.power", pActual, pMax), 50, love.graphics.getHeight() - 100)
 end
 
 function hud.drawRadar()
     love.graphics.setColor(1, 1, 1)
-    love.graphics.print(string.format("Radar: niv. %d (%d cases)", radar.level, radar.visibility), 50, love.graphics.getHeight() - 150)
+    love.graphics.print(lang.t("hud.radar", radar.level, radar.visibility), 50, love.graphics.getHeight() - 150)
 end
 
 function hud.draw()

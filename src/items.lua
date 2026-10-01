@@ -3,24 +3,24 @@ local items = {}
 
 items.ressources =
 {
-    { id = 'regolithe', density = 0.34, display = "Régolithe", color = {138,124,123}, hitBox = true },
-    { id = 'glace',     density = 0.18, display = "Glace"    , color = { 35,172,196}, hitBox = true },
-    { id = 'fer',       density = 0.19, display = "Fer"      , color = {196,194,190}, hitBox = true },
-    { id = 'titane',    density = 0.14, display = "Titane"   , color = {196,199,206}, hitBox = true },
-    { id = 'silicium',  density = 0.11, display = "Silicium" , color = { 82, 89,110}, hitBox = true },
-    { id = 'helium',    density = 0.04, display = "Hélium-3" , color = {100,230,220}, hitBox = true }
+    { id = 'regolithe', density = 0.34, color = {138,124,123}, hitBox = true },
+    { id = 'glace',     density = 0.18, color = { 35,172,196}, hitBox = true },
+    { id = 'fer',       density = 0.19, color = {196,194,190}, hitBox = true },
+    { id = 'titane',    density = 0.14, color = {196,199,206}, hitBox = true },
+    { id = 'silicium',  density = 0.11, color = { 82, 89,110}, hitBox = true },
+    { id = 'helium',    density = 0.04, color = {100,230,220}, hitBox = true }
 }
 
 items.specials =
 {
-    { id = 'oxygene', display = "Oxygène pur", color = {128, 16, 16} }
+    { id = 'oxygene', color = {128, 16, 16} }
 }
 
 items.objects =
 {
-    { id = 'panel',         display = "Panneau solaire", cost = { fer = 1, silicium = 2 }, craftTime = 5,  color = { 30,  60, 120} },
-    { id = 'battery',       display = "Batterie",        cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
-    { id = 'electrolyseur', display = "Électrolyseur",   cost = { fer = 2, titane = 1 },   craftTime = 10, color = {200, 120,  40} },
+    { id = 'panel',         cost = { fer = 1, silicium = 2 }, craftTime = 5,  color = { 30,  60, 120} },
+    { id = 'battery',       cost = { fer = 1, titane = 1 },   craftTime = 10, color = { 60, 180,  90} },
+    { id = 'electrolyseur', cost = { fer = 2, titane = 1 },   craftTime = 10, color = {200, 120,  40} },
 
     -- tests
     -- { id = 'panel',         display = "Panneau solaire", cost = { regolithe = 1 }, craftTime = 2,  color = { 30,  60, 120} },
@@ -30,11 +30,11 @@ items.objects =
 
 items.rocket =
 {
-    { id = 'coque',        display = "Coque",        cost = { regolithe = 6, fer = 2 } },
-    { id = 'reservoirs',   display = "Réservoirs",   cost = { fer = 3, titane = 2 } },
-    { id = 'electronique', display = "Électronique", cost = { silicium = 3, fer = 1 } },
-    { id = 'moteurs',      display = "Moteurs",      cost = { titane = 3, fer = 2 } },
-    { id = 'carburant',    display = "Carburant",    cost = { glace = 2, helium = 2 } }
+    { id = 'coque',        cost = { regolithe = 6, fer = 2 } },
+    { id = 'reservoirs',   cost = { fer = 3, titane = 2 } },
+    { id = 'electronique', cost = { silicium = 3, fer = 1 } },
+    { id = 'moteurs',      cost = { titane = 3, fer = 2 } },
+    { id = 'carburant',    cost = { glace = 2, helium = 2 } }
 
     -- tests
     -- { id = 'coque',        display = "Coque",        cost = { regolithe = 0 } },

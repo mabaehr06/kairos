@@ -12,6 +12,7 @@ local play = require "src.scenes.play"
 local fonts = require "src.fonts"
 local button = require "src.gui.button"
 local radar = require "src.radar"
+local lang = require "src.lang"
 
 local inventory = {}
 
@@ -44,7 +45,7 @@ local function costText(cost)
     local text = ""
     for ressourceId, quantity in pairs(cost) do
         local r = items.getRessourceById(ressourceId)
-        text = text .. string.format("%d %s, ", quantity, r.display)
+        text = text .. lang.t("inventory.cost", quantity, lang.t("item." .. r.id))
     end
     return text:sub(1, -3) -- drop the trailing ", "
 end
@@ -97,7 +98,7 @@ function inventory.drawRow(x, y, size, item)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
-    love.graphics.print(string.format("%s : %d", item.display, player.inventory[item.id]),
+    love.graphics.print(lang.t("inventory.row", lang.t("item." .. item.id), player.inventory[item.id]),
         x + size + 12, y + (size - fonts.hud:getHeight()) / 2)
 end
 
@@ -126,10 +127,10 @@ function inventory.drawRessources(x, y)
     yActual = yActual + lineHeight
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
-    love.graphics.print(string.format("Électricité : %d/%d", power.current, power.getCapacity()), x, yActual)
+    love.graphics.print(lang.t("inventory.power", power.current, power.getCapacity()), x, yActual)
 
     yActual = yActual + lineHeight
-    love.graphics.print(string.format("Radar : niv. %d (%d cases)", radar.level, radar.visibility), x, yActual)
+    love.graphics.print(lang.t("inventory.radar", radar.level, radar.visibility), x, yActual)
 
     return yActual + lineHeight * 2
 end
@@ -149,7 +150,7 @@ end
 function inventory.drawObjective(x, y)
     love.graphics.setFont(fonts.button)
     love.graphics.setColor(colors.title)
-    love.graphics.print(string.format("Objectif : %s", items.rocket[rocket.currentStep].display), x, y)
+    love.graphics.print(lang.t("inventory.objective", lang.t("rocket." .. items.rocket[rocket.currentStep].id)), x, y)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
@@ -158,7 +159,7 @@ function inventory.drawObjective(x, y)
 
     local count = 0
     for ressource, cost in pairs(missingCost) do
-        local text = string.format("%s : %d/%d", items.getRessourceById(ressource).display, cost.inventory, cost.cost)
+        local text = lang.t("inventory.objectiveCost", lang.t("item." .. ressource), cost.inventory, cost.cost)
         love.graphics.print(text, x, y + 40 + count * 30)
         count = count + 1
     end
@@ -174,7 +175,7 @@ function inventory.drawCraft(x, y, w, craft)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
-    love.graphics.print(string.format("%s - %ds", craft.display, math.ceil(craft.timeLeft)), x, y)
+    love.graphics.print(lang.t("inventory.craft", craft.name, math.ceil(craft.timeLeft)), x, y)
 
     love.graphics.setColor(colors.barBack)
     love.graphics.rectangle('fill', x, y + 30, w, barHeight)
@@ -192,7 +193,7 @@ function inventory.drawObjects(x, y, w)
 
         table.insert(inventory.recipeButtons, {
             object  = object,
-            label   = string.format("%s (%s - %ds)", object.display, costText(object.cost), object.craftTime),
+            label   = lang.t("inventory.recipe", lang.t("item." .. object.id), costText(object.cost), object.craftTime),
             font    = fonts.hud,
             x = x, y = y + (i - 1) * (layout.buttonHeight + layout.buttonGap),
             w = w, h = layout.buttonHeight,
@@ -213,10 +214,9 @@ function inventory.drawUpgrades(x, y, w)
     local label
 
     if nextLevel == nil then
-        label = string.format("Radar niv. %d : %d cases (maximum)", radar.level, radar.visibility)
+        label = lang.t("inventory.radarMax", radar.level, radar.visibility)
     else
-        label = string.format("Radar : %d → %d cases (%s - %ds)",
-            radar.visibility, nextLevel.visibility,
+        label = lang.t("inventory.radarUpgrade", radar.visibility, nextLevel.visibility,
             costText(nextLevel.cost), nextLevel.craftTime)
     end
 
@@ -237,7 +237,7 @@ function inventory.drawQueue(x, y, w)
     if #crafts.queue == 0 then
         love.graphics.setFont(fonts.hud)
         love.graphics.setColor(colors.text)
-        love.graphics.print("Aucune fabrication en cours", x, y)
+        love.graphics.print(lang.t("inventory.queueEmpty"), x, y)
         return
     end
 
@@ -247,13 +247,13 @@ function inventory.drawQueue(x, y, w)
 end
 
 function inventory.drawRecipes(x, y, w)
-    local yActual = drawHeading("Objets", x, y)
+    local yActual = drawHeading(lang.t("inventory.objects"), x, y)
     yActual = inventory.drawObjects(x, yActual, w)
 
-    yActual = drawHeading("Amélioration", x, yActual + layout.buttonGap)
+    yActual = drawHeading(lang.t("inventory.upgrade"), x, yActual + layout.buttonGap)
     yActual = inventory.drawUpgrades(x, yActual, w)
 
-    yActual = drawHeading("En cours :", x, yActual + layout.buttonGap)
+    yActual = drawHeading(lang.t("inventory.queue"), x, yActual + layout.buttonGap)
     inventory.drawQueue(x, yActual, w)
 end
 
@@ -269,12 +269,12 @@ function inventory.draw()
     love.graphics.rectangle('fill', 0, 0, sw, sh)
 
     local x, y, w, h = inventory.getPanelRect(1)
-    inventory.drawPanel(x, y, w, h, "Ressources")
+    inventory.drawPanel(x, y, w, h, lang.t("inventory.ressources"))
     local objectiveY = inventory.drawRessources(x + layout.padding, y + layout.titleHeight)
     inventory.drawObjective(x + layout.padding, objectiveY)
 
     x, y, w, h = inventory.getPanelRect(2)
-    inventory.drawPanel(x, y, w, h, "Fabrication")
+    inventory.drawPanel(x, y, w, h, lang.t("inventory.crafting"))
     inventory.drawRecipes(x + layout.padding, y + layout.titleHeight, w - layout.padding * 2)
 end
 
@@ -303,9 +303,9 @@ function inventory.mousepressed(x, y, pressedButton)
                 if player.inventory[b.object.id] > 0 then
                     game.selectedObject = b.object
                     game.changeState(game.state.inGame)
-                    log.add(string.format("Cliquez sur une case pour poser : %s", b.object.display))
+                    log.add(lang.t("inventory.place", lang.t("item." .. b.object.id)))
                 else
-                    log.add(string.format("Aucun %s à poser : fabriquez-le d'abord (clic gauche)", b.object.display))
+                    log.add(lang.t("inventory.placeNone", lang.t("item." .. b.object.id)))
                 end
                 return
             end

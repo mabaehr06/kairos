@@ -3,6 +3,7 @@ local items = require "src.items"
 local cycle = require "src.cycle"
 local utils = require "src.utils"
 local log = require "src.debug.log"
+local lang = require "src.lang"
 
 local power = {}
 
@@ -40,18 +41,18 @@ function power.electrolyze()
     local cost = cfg.power.electrolyzer
 
     if player.inventory['glace'] < cost.glaceCost then
-        log.add("Pas assez de glace")
+        log.add(lang.t("log.power.noIce"))
         return
     end
     if power.current < cost.electricityCost then
-        log.add(string.format("Pas assez d'électricité (%d/%d)", power.current, cost.electricityCost))
+        log.add(lang.t("log.power.noPower", power.current, cost.electricityCost))
         return
     end
 
     player.inventory['glace'] = player.inventory['glace'] - cost.glaceCost
     power.current = power.current - cost.electricityCost
     player.inventory['oxygene'] = player.inventory['oxygene'] + 1
-    log.add("Électrolyse : +1 Oxygène pur")
+    log.add(lang.t("log.power.done"))
 end
 
 return power

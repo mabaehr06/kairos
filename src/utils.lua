@@ -1,3 +1,5 @@
+local lang = require "src.lang"
+
 local utils = {}
 
 -- this function restrict the num value between the lower and the upper
@@ -42,7 +44,7 @@ function utils.formatTime(seconds)
     local min = math.floor(seconds / 60)
     local sec = seconds % 60
 
-    return string.format("%d min %d s", min, sec)
+    return lang.t("time.spent", min, sec)
 end
 
 -- SOUND
