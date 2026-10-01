@@ -47,6 +47,11 @@ sudo apt install libfuse2t64
 | R | Recommencer une partie (en jeu) |
 | Échap | Quitter |
 
+## Langues
+
+Le jeu est jouable en français, anglais, espagnol et italien, au choix depuis l'écran de paramètres.
+Le changement s'applique immédiatement, et la langue choisie est retenue d'une partie à l'autre.
+
 ## Architecture
 
 Le projet sépare les **écrans** des **composants**. Un écran vit dans `src/scenes` : il possède son état, ses entrées et son dessin, et expose `enter`, `update`, `draw`, `keypressed` et `mousepressed`. Un composant vit dans `src/gui` : il ne connaît rien des états du jeu et se contente d'être réutilisé par les écrans.
@@ -70,11 +75,13 @@ src/
 ├── camera.lua        suivi du joueur, conversion écran ↔ monde
 ├── save.lua          persistance du meilleur temps
 ├── settings.lua      réglages du joueur, et leur persistance
+├── lang.lua          résolution des textes dans la langue choisie
 ├── fonts.lua         polices du jeu, en tailles relatives à la fenêtre
 ├── version.lua       version du jeu, injectée depuis le tag git à la release
 ├── utils.lua         fonctions utilitaires
-├── scenes/           les écrans : menu, paramètres, partie et inventaire, écrans de fin
 ├── gui/              les composants : bouton, rangée de réglage et HUD
+├── scenes/           les écrans : menu, paramètres, partie et inventaire, écrans de fin
+├── lang/             un fichier de traduction par langue
 └── debug/log.lua     journal d'événements à l'écran
 assets/               logo, bannière, polices et drapeaux des langues
 docs/                 documentation du projet
