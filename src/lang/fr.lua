@@ -1,6 +1,6 @@
 return {
     -- menu
-    ["menu.play"]     = "JoueHer",
+    ["menu.play"]     = "Jouer",
     ["menu.settings"] = "Paramètres",
     ["menu.quit"]     = "Quitter",
     ["menu.best"]     = "Meilleur temps : %s",
@@ -38,10 +38,10 @@ return {
     ["inventory.objective"]     = "Objectif : %s",
     ["inventory.objectiveCost"] = "%s : %d/%d",
     ["inventory.place"]         = "Cliquez sur une case pour poser : %s",
-    ["inventory.placeNone"]     = "Aucun %s à poser : fabriquez-le d'abord (clic gauche)",
+    ["inventory.placeNone"]     = "Aucun exemplaire de %s à poser : fabriquez-en un d'abord (clic gauche)",
 
     -- hud
-    ["hud.power"] = "Électricité: %d/%d",
+    ["hud.power"] = "Électricité : %d/%d",
     ["hud.radar"] = "Radar: niv. %d (%d cases)",
 
     -- items, named by their id
@@ -59,12 +59,12 @@ return {
     -- the repair steps of the rocket, named by their id
     ["rocket.coque"]        = "Coque",
     ["rocket.reservoirs"]   = "Réservoirs",
-    ["rocket.electronique"] = "Électronique",
+    ["rocket.electronique"] = "Électroniques",
     ["rocket.moteurs"]      = "Moteurs",
     ["rocket.carburant"]    = "Carburant",
 
     -- the radar upgrade, as it reads in the craft queue
-    ["radar.craft"] = "Radar niv. %d",
+    ["radar.craft"] = "Radar Niv. %d",
 
     -- time
     ["time.day"]   = "Jour",
@@ -76,14 +76,14 @@ return {
     ["log.craft.started"]   = "Fabrication lancée : %s (%ds)",
     ["log.craft.done"]      = "Fabrication terminée : %s",
     ["log.craft.missing"]   = "Ressources insuffisantes (%s)",
-    ["log.craft.placed"]    = "%s posé",
+    ["log.craft.placed"]    = "Posé : %s",
     ["log.craft.cantPlace"] = "Impossible de poser ici",
     ["log.harvest"]         = "%s trouvé (total : %d)",
-    ["log.harvest.nothing"] = "Il n 'y a rien autour de toi.",
+    ["log.harvest.nothing"] = "Il n'y a rien autour de toi.",
     ["log.oxygen"]          = "Oxygène : %d/%d",
     ["log.oxygen.cant"]     = "Vous ne pouvez pas consommer ceci actuellement.",
     ["log.death.oxygen"]    = "Vous êtes mort d'asphyxie. Fin de la partie.",
-    ["log.rocket.upgraded"] = "Amélioration %s effectué (%d/%d)",
+    ["log.rocket.upgraded"] = "Réparation : %s (%d/%d)",
     ["log.rocket.cant"]     = "Vous ne pouvez pas améliorer la fusée",
     ["log.radar.level"]     = "Radar niveau %d : vision de %d cases",
     ["log.radar.max"]       = "Le radar est déjà au niveau maximum",
