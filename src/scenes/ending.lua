@@ -63,7 +63,7 @@ end
 -- function that draw why the player died, and how long he survived
 function ending.drawDefeat(screenWidth, y, lineHeight)
     love.graphics.setColor(colors.text)
-    utils.printCentered(game.deathReason or "", 0, y, screenWidth)
+    utils.printCentered(game.deathReason and lang.t(game.deathReason) or "", 0, y, screenWidth)
     utils.printCentered(lang.t("ending.time", utils.formatTime(game.totalTime)), 0, y + lineHeight, screenWidth)
 end
 

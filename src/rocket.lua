@@ -4,6 +4,7 @@ local items = require "src.items"
 local utils = require "src.utils"
 local log = require "src.debug.log"
 local game = require "src.game"
+local lang = require "src.lang"
 
 local rocket = {}
 
@@ -78,7 +79,7 @@ function rocket.deposit()
     -- finding if the player have enough quantity of each required item before processing to the upgrade
     -- case: the player doesn't have enough ressources to buy the step
     if not player.hasRessources(step.cost) then
-        log.add("Vous ne pouvez pas améliorer la fusée")
+        log.add(lang.t("log.rocket.cant"))
         return
     end
 
@@ -86,7 +87,7 @@ function rocket.deposit()
     for ressourceId, quantity in pairs(step.cost) do
         player.inventory[ressourceId] = player.inventory[ressourceId] - quantity
     end
-    log.add(string.format("Amélioration %s effectué (%d/%d)", step.display, rocket.currentStep, rocket.maximalStep))
+    log.add(lang.t("log.rocket.upgraded", lang.t("rocket." .. step.id), rocket.currentStep, rocket.maximalStep))
     rocket.currentStep = rocket.currentStep + 1
 
     -- case rocket is repaired

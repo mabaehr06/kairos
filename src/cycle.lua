@@ -1,5 +1,6 @@
 local cfg = require "src.config"
 local game = require "src.game"
+local lang = require "src.lang"
 
 local cycle = {}
 
@@ -29,7 +30,7 @@ function cycle.format()
 
     -- formula to get the cyrcle format
     local isDay = cycle.computeIsDay()
-    local cycle = isDay and "Jour" or "Nuit"
+    local cycle = isDay and lang.t("time.day") or lang.t("time.night")
 
     -- formula to get the number of day (we start Day 1, so + 1 at the end)
     local day = (game.totalTime / (dayTime + nightTime)) + 1
@@ -59,7 +60,7 @@ function cycle.format()
     local hour = math.floor(minSinceDayStart / 60) % 24
     local min = minSinceDayStart % 60
 
-    return string.format("%s %d - %02dh%02d", cycle, day, hour, min)
+    return lang.t("time.cycle", cycle, day, hour, min)
 end
 
 -- return true if it is currently daytime

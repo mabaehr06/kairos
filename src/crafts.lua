@@ -5,6 +5,7 @@ local camera = require "src.camera"
 local game = require "src.game"
 local log = require "src.debug.log"
 local power = require "src.power"
+local lang = require "src.lang"
 
 local crafts = {}
 
@@ -13,12 +14,14 @@ function crafts.load()
 end
 
 
--- a craft is any table holding a display, a craftTime and a cost, plus either an 'id' to drop in the
+-- a craft is any table holding a craftTime and a cost, plus either an 'id' to drop in the
 -- inventory once it is done, or an 'onComplete' callback for a craft that does something else.
 -- it returns true if the craft went into the queue, false if the player could not pay for it
 function crafts.start(craft)
+    local name = craft.name or lang.t("item." .. craft.id)
+
     if not player.hasRessources(craft.cost) then
-        log.add(string.format("Ressources insuffisantes (%s)", craft.display))
+        log.add(lang.t("log.craft.missing", name))
         return false
     end
 
@@ -29,12 +32,12 @@ function crafts.start(craft)
 
     table.insert(crafts.queue, {
         id         = craft.id,
-        display    = craft.display,
+        name       = name,
         timeLeft   = craft.craftTime,
         craftTime  = craft.craftTime,
         onComplete = craft.onComplete
     })
-    log.add(string.format("Fabrication lancée : %s (%ds)", craft.display, craft.craftTime))
+    log.add(lang.t("log.craft.started", name, craft.craftTime))
     return true
 end
 
@@ -45,7 +48,7 @@ function crafts.update(dt)
         craft.timeLeft = craft.timeLeft - dt
 
         if craft.timeLeft <= 0 then
-            log.add(string.format("Fabrication terminée : %s", craft.display))
+            log.add(lang.t("log.craft.done", craft.name))
 
             -- the callback runs after the message above, so its own message reads next and not first
             if craft.onComplete ~= nil then
@@ -75,11 +78,11 @@ function crafts.place(x, y, button)
         tile.object = game.selectedObject
         tile.containObject = true
         player.inventory[game.selectedObject.id] = player.inventory[game.selectedObject.id] - 1
-        log.add(string.format("%s posé", game.selectedObject.display))
+        log.add(lang.t("log.craft.placed", lang.t("item." .. game.selectedObject.id)))
         power.onObjectPlaced(game.selectedObject.id)
         game.selectedObject = nil
     else
-        log.add("Impossible de poser ici")
+        log.add(lang.t("log.craft.cantPlace"))
     end
 end
 

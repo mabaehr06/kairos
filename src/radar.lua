@@ -1,6 +1,7 @@
 local cfg   = require "src.config"
 local items = require "src.items"
 local log   = require "src.debug.log"
+local lang = require "src.lang"
 
 local radar = {}
 
@@ -26,17 +27,17 @@ function radar.upgrade()
     local nextLevel = radar.getNextLevel()
 
     if nextLevel == nil then
-        log.add("Le radar est déjà au niveau maximum")
+        log.add(lang.t("log.radar.max"))
         return
     end
 
     if radar.upgrading then
-        log.add("Une amélioration du radar est déjà en cours")
+        log.add(lang.t("log.radar.running"))
         return
     end
 
     radar.upgrading = crafts.start({
-        display    = string.format("Radar niv. %d", radar.level + 1),
+        name       = lang.t("radar.craft", radar.level + 1),
         craftTime  = nextLevel.craftTime,
         cost       = nextLevel.cost,
         onComplete = radar.applyUpgrade
@@ -48,7 +49,7 @@ function radar.applyUpgrade()
     radar.level = radar.level + 1
     radar.visibility = items.radar[radar.level].visibility
     radar.upgrading = false
-    log.add(string.format("Radar niveau %d : vision de %d cases", radar.level, radar.visibility))
+    log.add(lang.t("log.radar.level", radar.level, radar.visibility))
 end
 
 return radar

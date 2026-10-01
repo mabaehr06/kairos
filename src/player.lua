@@ -7,6 +7,7 @@ local game = require "src.game"
 local power = require "src.power"
 local utils = require "src.utils"
 local radar = require "src.radar"
+local lang = require "src.lang"
 
 player = {}
 
@@ -61,12 +62,12 @@ function player.recoltRessource()
                 local ressource = map.tiles[j][i].ressource
                 player.addToInventory(ressource)
                 map.removeObject(i, j)
-                log.add(string.format("%s trouvé (total : %d)", ressource.display, player.inventory[ressource.id]))
+                log.add(lang.t("log.harvest", lang.t("item." .. ressource.id), player.inventory[ressource.id]))
                 return
             end
         end
     end
-    log.add(string.format("Il n 'y a rien autour de toi."))
+    log.add(lang.t("log.harvest.nothing"))
 end
 
 function player.hasRessources(cost)
@@ -160,9 +161,9 @@ end
 
 function player.consumeOxygen()
     player.oxygen = player.oxygen - 1
-    log.add(string.format("Oxygène : %d/%d", player.oxygen, cfg.player.maxOxygen))
+    log.add(lang.t("log.oxygen", player.oxygen, cfg.player.maxOxygen))
     if player.oxygen <= 0 then
-        game.lose(string.format("Vous êtes mort d'asphyxie. Fin de la partie."))
+        game.lose("log.death.oxygen")
         -- lose condition here
     end
 end
@@ -172,10 +173,10 @@ function player.consumeForOxygen(itemId, restore)
     if player.inventory[itemId] > 0 and player.oxygen < maxOxy then
         player.inventory[itemId] = player.inventory[itemId] - 1
         player.oxygen = utils.clamp(player.oxygen + restore, 0, maxOxy)
-        log.add(string.format("Oxygène : %d/%d", player.oxygen, maxOxy))
+        log.add(lang.t("log.oxygen", player.oxygen, maxOxy))
         return
     end
-    log.add("Vous ne pouvez pas consommer ceci actuellement.")
+    log.add(lang.t("log.oxygen.cant"))
 end
 
 -- - LOVE BASIC FUNCTIONS

@@ -45,7 +45,7 @@ local function costText(cost)
     local text = ""
     for ressourceId, quantity in pairs(cost) do
         local r = items.getRessourceById(ressourceId)
-        text = text .. lang.t("inventory.cost", quantity, r.display)
+        text = text .. lang.t("inventory.cost", quantity, lang.t("item." .. r.id))
     end
     return text:sub(1, -3) -- drop the trailing ", "
 end
@@ -98,7 +98,7 @@ function inventory.drawRow(x, y, size, item)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
-    love.graphics.print(lang.t("inventory.row", item.display, player.inventory[item.id]),
+    love.graphics.print(lang.t("inventory.row", lang.t("item." .. item.id), player.inventory[item.id]),
         x + size + 12, y + (size - fonts.hud:getHeight()) / 2)
 end
 
@@ -150,7 +150,7 @@ end
 function inventory.drawObjective(x, y)
     love.graphics.setFont(fonts.button)
     love.graphics.setColor(colors.title)
-    love.graphics.print(lang.t("inventory.objective", items.rocket[rocket.currentStep].display), x, y)
+    love.graphics.print(lang.t("inventory.objective", lang.t("rocket." .. items.rocket[rocket.currentStep].id)), x, y)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
@@ -159,7 +159,7 @@ function inventory.drawObjective(x, y)
 
     local count = 0
     for ressource, cost in pairs(missingCost) do
-        local text = lang.t("inventory.objectiveCost", items.getRessourceById(ressource).display, cost.inventory, cost.cost)
+        local text = lang.t("inventory.objectiveCost", lang.t("item." .. ressource), cost.inventory, cost.cost)
         love.graphics.print(text, x, y + 40 + count * 30)
         count = count + 1
     end
@@ -175,7 +175,7 @@ function inventory.drawCraft(x, y, w, craft)
 
     love.graphics.setFont(fonts.hud)
     love.graphics.setColor(colors.text)
-    love.graphics.print(lang.t("inventory.craft", craft.display, math.ceil(craft.timeLeft)), x, y)
+    love.graphics.print(lang.t("inventory.craft", craft.name, math.ceil(craft.timeLeft)), x, y)
 
     love.graphics.setColor(colors.barBack)
     love.graphics.rectangle('fill', x, y + 30, w, barHeight)
@@ -193,7 +193,7 @@ function inventory.drawObjects(x, y, w)
 
         table.insert(inventory.recipeButtons, {
             object  = object,
-            label   = lang.t("inventory.recipe", object.display, costText(object.cost), object.craftTime),
+            label   = lang.t("inventory.recipe", lang.t("item." .. object.id), costText(object.cost), object.craftTime),
             font    = fonts.hud,
             x = x, y = y + (i - 1) * (layout.buttonHeight + layout.buttonGap),
             w = w, h = layout.buttonHeight,
@@ -303,9 +303,9 @@ function inventory.mousepressed(x, y, pressedButton)
                 if player.inventory[b.object.id] > 0 then
                     game.selectedObject = b.object
                     game.changeState(game.state.inGame)
-                    log.add(lang.t("inventory.place", b.object.display))
+                    log.add(lang.t("inventory.place", lang.t("item." .. b.object.id)))
                 else
-                    log.add(lang.t("inventory.placeNone", b.object.display))
+                    log.add(lang.t("inventory.placeNone", lang.t("item." .. b.object.id)))
                 end
                 return
             end

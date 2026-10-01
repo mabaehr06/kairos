@@ -2,6 +2,7 @@ local cfg = require "src.config"
 local log = require "src.debug.log"
 local save = require "src.save"
 local utils = require "src.utils"
+local lang = require "src.lang"
 
 local game = {}
 
@@ -53,13 +54,14 @@ end
 function game.win()
     game.stateSelected = game.state.victory
     game.isNewRecord = save.submit(game.totalTime)
-    log.add(string.format("Victoire en %.02f secondes", game.totalTime))
+    log.add(lang.t("log.victory", game.totalTime))
 end
 
+-- the reason is a lang key, not a text: the end screen resolve it when it draw it
 function game.lose(reason)
     game.stateSelected = game.state.defeat
     game.deathReason = reason
-    log.add(game.deathReason)
+    log.add(lang.t(game.deathReason))
 end
 
 return game
